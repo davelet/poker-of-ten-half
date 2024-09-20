@@ -1,58 +1,42 @@
+#![allow(dead_code)]
+
+use std::panic;
+
 use bevy::prelude::*;
+use constants::PANIC_FLAG;
+use plugins::prelude::*;
+use resources::prelude::*;
+use systems::prelude::*;
+
+mod components;
+mod systems;
+mod resources;
+mod plugins;
+mod constants;
 
 fn main() {
+    {
+        panic::set_hook(Box::new(move |panic_info| {
+            eprintln!("应用发生了错误: {}", panic_info);
+            unsafe { PANIC_FLAG = true };
+        }));
+    }
     App::new()
         .add_plugins(DefaultPlugins)
-        .add_plugins(HelloPlugin)
+        .add_plugins((splash_plugin, menu_plugin, game_plugin, exit_plugin))
+        .insert_resource(MatchPlayerCount::One)
+        .insert_resource(MatchPokerSuitCount::One)
+        .insert_resource(DeckTable::default())
+        .init_state::<AppState>()
+        .add_systems(Startup, setup)
+        .add_systems(Update, check_panic_and_switch_state)
         .run();
 }
 
-// fn hello_world() {
-//     println!("hello world!");
-// }
-#[derive(Component)]
-struct Person;
-
-#[derive(Component)]
-struct Name(String);
-
-fn add_people(mut commands: Commands) {
-    commands.spawn((Person, Name("Elaina Proctor".to_string())));
-    commands.spawn((Person, Name("Renzo Hume".to_string())));
-    commands.spawn(Name("ZEmpty".to_string()));
-    commands.spawn((Person, Name("Zayna Nieves".to_string())));
-}
-fn greet_people(time: Res<Time>, mut timer: ResMut<GreetTimer>, query: Query<&Name, With<Person>>) {
-    // for name in &query {
-    //     println!("hello {}!", name.0);
-    // }
-
-    // update our timer with the time elapsed since the last update
-    // if that caused the timer to finish, we say hello to everyone
-    if timer.0.tick(time.delta()).just_finished() {
-        for name in &query {
-            // println!("hello {}!", name.0);
-            info!("hello {}!", name.0);
-        }
-    }
-}
-
-fn update_people(mut query: Query<&mut Name, With<Person>>) {
-    for mut name in &mut query {
-        if name.0 == "Elaina Proctor" {
-            name.0 = "Elaina Hume".to_string();
-            break; // We don't need to change any other names.
-        }
-    }
-}
-#[derive(Resource)]
-struct GreetTimer(Timer);
-pub struct HelloPlugin;
-
-impl Plugin for HelloPlugin {
-    fn build(&self, app: &mut App) {
-        app.insert_resource(GreetTimer(Timer::from_seconds(2.0, TimerMode::Repeating)));
-        app.add_systems(Startup, add_people);
-        app.add_systems(Update, (update_people, greet_people).chain());
+fn check_panic_and_switch_state(state: ResMut<State<AppState>>, mut next_state: ResMut<NextState<AppState>>) {
+    // println!("check_panic_and_switch_state");
+    if unsafe { PANIC_FLAG } && *state.get() != AppState::Panic {
+        println!("panic set");
+        next_state.set(AppState::Panic);
     }
 }
