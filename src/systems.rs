@@ -1,9 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{
-    components::{CardPoint, CardRank, CardType, PokerReducedPoint, PokerSuiteEnum},
-    entities::PokerCard,
-};
+use crate::components::*;
 
 pub fn create_deck(mut commands: Commands) {
     let suits_arr = [
@@ -15,7 +12,7 @@ pub fn create_deck(mut commands: Commands) {
     for suite in suits_arr {
         for rank in 1..=13 {
             commands.spawn((
-                PokerCard,
+                // PokerCard,
                 CardRank { rank },
                 CardType { suite: suite.clone() },
                 CardPoint {
@@ -28,7 +25,7 @@ pub fn create_deck(mut commands: Commands) {
         }
     }
     commands.spawn((
-        PokerCard,
+        // PokerCard,
         CardRank { rank: -1 },
         CardType {
             suite: PokerSuiteEnum::Joker,
@@ -38,7 +35,7 @@ pub fn create_deck(mut commands: Commands) {
         },
     ));
     commands.spawn((
-        PokerCard,
+        // PokerCard,
         CardRank { rank: -2 },
         CardType {
             suite: PokerSuiteEnum::Joker,

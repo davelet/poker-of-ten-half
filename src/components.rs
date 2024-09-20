@@ -1,5 +1,7 @@
 use bevy::prelude::*;
 
+// #[derive(Component)]
+// pub struct PokerCard;
 /// 牌数，A 2,3,4,5,6,7,8,9, 10，J Q K
 #[derive(Component)]
 pub struct CardRank {
@@ -35,3 +37,20 @@ pub enum PokerReducedPoint {
     NaturalPoint(u8),
     HalfPoint, // 1/2
 }
+
+impl std::fmt::Display for PokerReducedPoint {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            PokerReducedPoint::NaturalPoint(point) => write!(f, "{}", point),
+            PokerReducedPoint::HalfPoint => write!(f, "0.5"),
+        }
+    }
+}
+
+
+//
+//
+
+/// 比赛豆子
+#[derive(Component)]
+pub struct MatchCoin;

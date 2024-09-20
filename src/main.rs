@@ -1,16 +1,18 @@
 use bevy::prelude::*;
-use components::{CardRank, CardType};
-use entities::PokerCard;
-use systems::create_deck;
+use components::*;
+use resources::*;
+use systems::*;
 
-mod entities;
 mod components;
 mod systems;
+mod resources;
 
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
         .insert_resource(GreetTimer(Timer::from_seconds(2.0, TimerMode::Repeating)))
+        .insert_resource(MatchPlayerCount::One)
+        .init_state::<GameState>()
         .add_systems(Startup, create_deck)
         .add_systems(Update, (update_people, greet_people).chain())
         .run();
@@ -22,11 +24,11 @@ struct Person;
 #[derive(Component)]
 struct Name(String);
 
-fn greet_people(time: Res<Time>, mut timer: ResMut<GreetTimer>, query: Query<(&CardRank, &CardType), With<CardType>>) {
+fn greet_people(time: Res<Time>, mut timer: ResMut<GreetTimer>, query: Query<(&CardRank, &CardType, &CardPoint)>) {
     let t = timer.0.tick(time.delta());
     if t.just_finished() {
         for name in &query {
-            info!("hello {} {:?}", name.0.rank, name.1.suite);
+            info!("hello {} {:?} {}", name.0.rank, name.1.suite, name.2.point_type);
         }
         
         
