@@ -2,6 +2,9 @@ use bevy::prelude::*;
 
 use crate::components::*;
 
+pub fn setup_game(mut commands: Commands) {
+    create_deck(commands);
+}
 pub fn create_deck(mut commands: Commands) {
     let suits_arr = [
         PokerSuiteEnum::Club,

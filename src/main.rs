@@ -2,10 +2,12 @@ use bevy::prelude::*;
 use components::*;
 use resources::*;
 use systems::*;
+use plugins::*;
 
 mod components;
 mod systems;
 mod resources;
+mod plugins;
 
 fn main() {
     App::new()
@@ -13,8 +15,8 @@ fn main() {
         .insert_resource(GreetTimer(Timer::from_seconds(2.0, TimerMode::Repeating)))
         .insert_resource(MatchPlayerCount::One)
         .init_state::<GameState>()
-        .add_systems(Startup, create_deck)
-        .add_systems(Update, (update_people, greet_people).chain())
+        .add_systems(Startup, setup_game)
+        .add_plugins((splash_plugin, menu_plugin, game_plugin))
         .run();
 }
 
