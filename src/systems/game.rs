@@ -1,8 +1,9 @@
 use bevy::prelude::*;
 
-use crate::components::*;
+use crate::components::prelude::*;
 
 pub fn setup_game(mut commands: Commands) {
+    commands.spawn(Camera2dBundle::default());
     create_deck(commands);
 }
 pub fn create_deck(mut commands: Commands) {
