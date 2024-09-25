@@ -4,6 +4,11 @@ use crate::components::prelude::*;
 use crate::resources::prelude::*;
 
 pub fn splash_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
+    info!("Splash screen setup");
+    info!("pre setup");
+    let font_handle = asset_server.load::<Font>("/System/Library/Fonts/PingFang.ttc");
+    // commands.insert_resource(font_handle);
+    unsafe { crate::constants::HAN_FONT_OPTION = Some(font_handle) };
     let icon = asset_server.load("screen.png");
     // Display the logo
     commands

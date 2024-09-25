@@ -1,24 +1,28 @@
 use bevy::{app::App, prelude::*};
 
-use crate::systems::prelude::*;
-use crate::resources::prelude::*;
 use crate::components::prelude::*;
+use crate::resources::prelude::*;
+use crate::systems::prelude::*;
+
+pub mod prelude {
+   pub use super::*;
+}
+
+pub fn pre_setup_plugin(app: &mut App) {
+    info!("Loading pre_setup");
+    // app.add_systems(PreStartup, pre_setup);
+}
 
 pub fn splash_plugin(app: &mut App) {
-   // As this plugin is managing the splash screen, it will focus on the state `GameState::Splash`
-   app
-   // When entering the state, spawn everything needed for this screen
-   .add_systems(OnEnter(GameState::Splash), splash_setup)
-   // While in this state, run the `countdown` system
-   .add_systems(Update, countdown.run_if(in_state(GameState::Splash)))
-   // When exiting the state, despawn everything that was spawned for this screen
-   .add_systems(OnExit(GameState::Splash), despawn_screen::<OnSplashScreen>); 
+    info!("Loading splash plugin");
+    app.add_systems(OnEnter(GameState::Splash), splash_setup)
+        .add_systems(Update, countdown.run_if(in_state(GameState::Splash)))
+        .add_systems(OnExit(GameState::Splash), despawn_screen::<OnSplashScreen>);
 }
 
 pub fn menu_plugin(app: &mut App) {
-    
+    info!("Loading menu plugin");
+    app.add_systems(OnEnter(GameState::Menu), show_menu);
 }
 
-pub fn game_plugin(app: &mut App) {
-    
-}
+pub fn game_plugin(app: &mut App) {}
