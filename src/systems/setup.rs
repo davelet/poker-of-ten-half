@@ -1,22 +1,10 @@
 use bevy::prelude::*;
 
-use crate::{components::prelude::*, constants::HAN_FONT_OPTION};
+use crate::components::prelude::*;
 
-
-pub fn pre_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
-    info!("pre setup");
-    // let font_handle = asset_server.load::<Font>("/System/Library/Fonts/PingFang.ttc");
-    let font_handle = asset_server.load::<Font>("fonts/NotoSanSC-ExtraBold1.ttf");
-    // commands.insert_resource(font_handle);
-    unsafe { HAN_FONT_OPTION = Some(font_handle) };
-}
-
-pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
+pub fn setup(mut commands: Commands, _asset_server: Res<AssetServer>) {
     info!("setup");
     commands.spawn(Camera2dBundle::default());
-    // let font_handle = asset_server.load::<Font>("/System/Library/Fonts/PingFang.ttc");
-    // unsafe { HAN_FONT_OPTION = Some(font_handle) };
-    // println!("LS = {:?}", asset_server.load_state(font_handle.id()));
     
     create_deck(commands);
 }

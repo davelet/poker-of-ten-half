@@ -8,14 +8,9 @@ pub mod prelude {
    pub use super::*;
 }
 
-pub fn pre_setup_plugin(app: &mut App) {
-    info!("Loading pre_setup");
-    // app.add_systems(PreStartup, pre_setup);
-}
-
 pub fn splash_plugin(app: &mut App) {
     info!("Loading splash plugin");
-    app.add_systems(OnEnter(GameState::Splash), splash_setup)
+    app.add_systems(OnEnter(GameState::Splash), (splash_setup).chain())
         .add_systems(Update, countdown.run_if(in_state(GameState::Splash)))
         .add_systems(OnExit(GameState::Splash), despawn_screen::<OnSplashScreen>);
 }

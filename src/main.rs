@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use bevy::prelude::*;
 use resources::prelude::*;
 use systems::prelude::*;
@@ -17,7 +19,7 @@ fn main() {
         .init_state::<GameState>()
         // .add_systems(PreStartup, pre_setup)
         .add_systems(Startup, setup)
-        .add_plugins((pre_setup_plugin, (splash_plugin, menu_plugin, game_plugin)))
+        .add_plugins((splash_plugin, menu_plugin, game_plugin))
         .run();
 }
 

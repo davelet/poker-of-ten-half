@@ -5,11 +5,9 @@ use crate::resources::prelude::*;
 
 pub fn splash_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     info!("Splash screen setup");
-    info!("pre setup");
-    let font_handle = asset_server.load::<Font>("/System/Library/Fonts/PingFang.ttc");
-    // commands.insert_resource(font_handle);
+    let font_handle = asset_server.load::<Font>(crate::constants::APP_FONT);
     unsafe { crate::constants::HAN_FONT_OPTION = Some(font_handle) };
-    let icon = asset_server.load("screen.png");
+    info!("font file setup");
     // Display the logo
     commands
         .spawn((
@@ -26,6 +24,7 @@ pub fn splash_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
             OnSplashScreen,
         ))
         .with_children(|parent| {
+            let icon = asset_server.load("poker-title.png");
             parent.spawn(ImageBundle {
                 style: Style {
                     // This will set the logo to be 200px wide, and auto adjust its height
