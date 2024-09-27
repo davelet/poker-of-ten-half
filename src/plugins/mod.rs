@@ -5,7 +5,7 @@ use crate::resources::prelude::*;
 use crate::systems::prelude::*;
 
 pub mod prelude {
-   pub use super::*;
+    pub use super::*;
 }
 
 pub fn splash_plugin(app: &mut App) {
@@ -17,7 +17,8 @@ pub fn splash_plugin(app: &mut App) {
 
 pub fn menu_plugin(app: &mut App) {
     info!("Loading menu plugin");
-    app.add_systems(OnEnter(GameState::Menu), show_menu);
+    app.add_systems(OnEnter(GameState::Menu), show_menu)
+        .add_systems(Update, menu_action);
 }
 
 pub fn game_plugin(app: &mut App) {}

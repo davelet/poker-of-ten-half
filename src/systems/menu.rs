@@ -1,12 +1,7 @@
-use bevy::prelude::*;
+use bevy::{color::palettes::css::*, prelude::*};
 
-use crate::{
-    components::prelude::*,
-    constants::{self, *},
-    HanTextStyle,
-};
+use crate::{components::prelude::*, constants::*, GameState, HanTextStyle};
 
-const TEXT_COLOR: Color = Color::srgb(0.9, 0.9, 0.9);
 pub fn show_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands
         .spawn((
@@ -74,24 +69,20 @@ fn place_buttons(parent: &mut ChildBuilder) {
                 },
                 ..default()
             })
-            .with_children(|parent: &mut ChildBuilder<'_>| {
-                parent
-                    .spawn(TextBundle {
-                        text: Text::from_section(
-                            "1", // initial text
-                            HanTextStyle::default()
-                                .with_color(TEXT_COLOR)
-                                .with_font_size(40.0)
-                                .get_style(),
-                        ),
-                        // style: Style {
-                        //     margin: UiRect::all(Val::Px(5.0)),
-                        //     ..Default::default()
-                        // },
-                        // focus_policy: bevy::ui::FocusPolicy::Pass,
-                        ..Default::default()
-                    });
-            });
+            // .with_children(|parent: &mut ChildBuilder<'_>| {
+                // parent
+                //     .spawn(TextBundle {
+                //         text: Text::from_section(
+                //             "1", // initial text
+                //             HanTextStyle::default()
+                //                 .with_color(TEXT_COLOR)
+                //                 .with_font_size(40.0)
+                //                 .get_style(),
+                //         ),
+                //         ..Default::default()
+                //     });
+            // })
+            ;
 
             // 第二行放开始
             p.spawn(ButtonBundle {
@@ -101,7 +92,7 @@ fn place_buttons(parent: &mut ChildBuilder) {
                     align_items: AlignItems::Center,
                     ..Default::default()
                 },
-                background_color: bevy::color::palettes::css::CRIMSON.into(),
+                background_color: START_BUTTON_NORMAL_COLOR,
                 ..Default::default()
             })
             .with_children(|parent| {
@@ -153,4 +144,21 @@ fn place_title(parent: &mut ChildBuilder) {
                 }),
             );
         });
+}
+
+pub fn menu_action(
+    mut interaction_query: Query<(&Interaction, &mut BackgroundColor), (Changed<Interaction>, With<Button>)>,
+    mut app_exit_events: EventWriter<AppExit>,
+    mut game_state: ResMut<NextState<GameState>>,
+) {
+    for (interaction, mut color) in &mut interaction_query {
+        if *interaction == Interaction::Pressed {
+            *color = DARK_GREY.into();
+            app_exit_events.send(AppExit::Success);
+        } else if *interaction == Interaction::Hovered {
+            *color = START_BUTTON_HOVER_COLOR.into(); 
+        } else {
+            *color = START_BUTTON_NORMAL_COLOR;
+        }
+    }
 }
