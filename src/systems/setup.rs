@@ -3,7 +3,6 @@ use bevy::prelude::*;
 use crate::components::prelude::*;
 
 pub fn setup(mut commands: Commands, _asset_server: Res<AssetServer>) {
-    info!("setup");
     commands.spawn(Camera2dBundle::default());
     
     create_deck(commands);

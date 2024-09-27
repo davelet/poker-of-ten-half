@@ -39,7 +39,7 @@ fn place_buttons(parent: &mut ChildBuilder) {
             ..default()
         })
         .with_children(|p| {
-            // 第一行放两个按钮
+            // TODO 第一行放两个按钮，控制人数和牌副，最多4人4副牌 TODO
             p.spawn(NodeBundle {
                 style: Style {
                     align_items: AlignItems::Center,

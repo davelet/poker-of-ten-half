@@ -4,10 +4,8 @@ use crate::components::prelude::*;
 use crate::resources::prelude::*;
 
 pub fn splash_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
-    info!("Splash screen setup");
     let font_handle = asset_server.load::<Font>(crate::constants::APP_FONT);
     unsafe { crate::constants::HAN_FONT_OPTION = Some(font_handle) };
-    info!("font file setup");
     // Display the logo
     commands
         .spawn((

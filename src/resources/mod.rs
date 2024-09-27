@@ -19,6 +19,13 @@ pub enum MatchPlayerCount {
     Three = 3,
 }
 
+#[derive(Resource)]
+pub enum MatchPokerSuitCount {
+    One = 1,
+    Two = 2,
+    Three = 3,
+}
+
 #[derive(Resource, Deref, DerefMut)]
 pub struct SplashTimer {
     pub timer: Timer,
