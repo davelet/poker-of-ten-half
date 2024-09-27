@@ -1,8 +1,5 @@
 use crate::{components::prelude::*, GameState, HanTextStyle};
-use bevy::{
-    color::palettes::css::*,
-    prelude::*,
-};
+use bevy::{color::palettes::css::*, prelude::*};
 
 pub fn game_setup(mut commands: Commands, _asset_server: Res<AssetServer>) {
     commands
@@ -12,7 +9,7 @@ pub fn game_setup(mut commands: Commands, _asset_server: Res<AssetServer>) {
                     width: Val::Percent(100.0),
                     height: Val::Percent(100.0),
                     align_items: AlignItems::Center,
-                    justify_content: JustifyContent::Start,
+                    // justify_content: JustifyContent::Start,
                     flex_direction: FlexDirection::Column,
                     ..default()
                 },
@@ -40,7 +37,7 @@ fn place_header(parent: &mut ChildBuilder) {
                 // height: Val::Percent(10.0),
                 ..default()
             },
-            background_color: CRIMSON.into(),
+            background_color: DARK_ORANGE.into(),
             ..default()
         })
         .with_children(|parent| {
@@ -60,7 +57,7 @@ fn place_header(parent: &mut ChildBuilder) {
                     ButtonOnGamePage::BackMenuButton,
                 ))
                 .with_children(|parent| {
-                    parent.spawn(TextBundle::from_section("BACK_BUTTON_TEXT", style.clone()));
+                    parent.spawn(TextBundle::from_section("返回菜单", style.clone()));
                 });
 
             parent.spawn(NodeBundle {
@@ -88,12 +85,39 @@ fn place_header(parent: &mut ChildBuilder) {
                     ButtonOnGamePage::ExitGameButton,
                 ))
                 .with_children(|parent| {
-                    parent.spawn(TextBundle::from_section("EXIT_BUTTON_TEXT", style.clone()));
+                    parent.spawn(TextBundle::from_section("关闭退出", style.clone()));
                 });
         });
 }
 
-fn place_stage(parent: &mut ChildBuilder) {}
+fn place_stage(parent: &mut ChildBuilder) {
+    parent
+        .spawn(NodeBundle {
+            style: Style {
+                width: Val::Percent(100.0),
+                height: Val::Percent(100.0),
+                align_items: AlignItems::Center,
+                justify_content: JustifyContent::Center,
+                ..default()
+            },
+            background_color: DARK_ORANGE.into(),
+            ..default()
+        })
+        .with_children(|parent| {
+            // 三行布局：对面、中、自己。其中中间的包括左边、中桌、右边
+            place_north_spot(parent);
+            place_center_line(parent);
+            place_south_spot(parent);
+        });
+}
+
+fn place_north_spot(parent: &mut ChildBuilder) {
+
+}
+// 中间的包括左边、中桌、右边
+fn place_center_line(parent: &mut ChildBuilder) {}
+
+fn place_south_spot(parent: &mut ChildBuilder) {}
 
 pub fn game_update(
     mut interaction_query: Query<

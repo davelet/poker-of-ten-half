@@ -2,7 +2,7 @@ use bevy::{color::palettes::css::*, prelude::*};
 
 use crate::{components::prelude::*, constants::*, GameState, HanTextStyle, IconLoader};
 
-pub fn show_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
+pub fn show_menu(mut commands: Commands) {
     commands
         .spawn((
             NodeBundle {

@@ -48,18 +48,14 @@ impl Default for HanTextStyle {
 }
 
 impl HanTextStyle {
-    pub fn with_font_size(&self, font_size: f32) -> Self {
-        let mut default = HanTextStyle::default();
-
-        default.0.font_size = font_size;
-        default
+    pub fn with_font_size(&mut self, font_size: f32) -> &mut Self {
+        self.0.font_size = font_size;
+        self
     }
 
-    pub fn with_color(&self, color: Color) -> Self {
-        let mut default = HanTextStyle::default();
-
-        default.0.color = color;
-        default
+    pub fn with_color(&mut self, color: Color) -> &mut Self {
+        self.0.color = color;
+        self
     }
 
     pub fn get_style(&self) -> TextStyle {
