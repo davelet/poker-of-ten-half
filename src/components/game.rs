@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
-// #[derive(Component)]
-// pub struct PokerCard;
+#[derive(Component)]
+pub struct OnGameScreen;
 /// 牌数，A 2,3,4,5,6,7,8,9, 10，J Q K
 #[derive(Component)]
 pub struct CardRank {
