@@ -6,6 +6,10 @@ use crate::resources::prelude::*;
 pub fn splash_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     let font_handle = asset_server.load::<Font>(crate::constants::APP_FONT);
     unsafe { crate::constants::HAN_FONT_OPTION = Some(font_handle) };
+    let icon_handle = asset_server.load(crate::constants::APP_ICON);
+    unsafe { crate::constants::APP_ICON_IMAGE = Some(icon_handle) };
+    
+    
     // Display the logo
     commands
         .spawn((

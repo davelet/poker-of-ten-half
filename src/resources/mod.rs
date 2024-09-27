@@ -66,3 +66,20 @@ impl HanTextStyle {
         self.0.clone()
     }
 }
+
+pub struct IconLoader(pub UiImage);
+
+impl Default for IconLoader {
+    fn default() -> Self {
+        if let Some(hf) = unsafe { crate::constants::APP_ICON_IMAGE.clone() } {
+            return Self(UiImage::new(hf));
+        }
+        Self(Default::default())
+    }
+}
+
+impl IconLoader {
+    pub fn get_image(&self) -> UiImage {
+        self.0.clone()
+    }
+}

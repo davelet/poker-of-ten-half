@@ -1,10 +1,12 @@
-use bevy::{asset::Handle, color::{palettes::css::*, Color}, text::Font, ui::BackgroundColor};
+use bevy::{asset::Handle, color::{palettes::css::*, Color}, prelude::Image, text::Font, ui::BackgroundColor};
 
 
 
 pub const MENU_TITLE: &str = "推十点半";
 pub const APP_FONT: &str = "Alibaba-PuHuiTi-Regular.otf";
+pub const APP_ICON: &str = "poker-title.png";
 pub static mut HAN_FONT_OPTION: Option<Handle<Font>> = None;
+pub static mut APP_ICON_IMAGE: Option<Handle<Image>> = None;
 
 pub const TEXT_COLOR: Color = Color::srgb(0.9, 0.9, 0.9);
 pub const START_BUTTON_TEXT: &str = "はじめる";

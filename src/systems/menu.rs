@@ -1,6 +1,6 @@
 use bevy::{color::palettes::css::*, prelude::*};
 
-use crate::{components::prelude::*, constants::*, GameState, HanTextStyle};
+use crate::{components::prelude::*, constants::*, GameState, HanTextStyle, IconLoader};
 
 pub fn show_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands
@@ -21,7 +21,7 @@ pub fn show_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
         .with_children(|parent| {
             place_title(parent);
 
-            place_image(asset_server, parent);
+            place_image(parent);
 
             place_buttons(parent);
         });
@@ -112,14 +112,13 @@ fn place_buttons(parent: &mut ChildBuilder) {
             });
         });
 }
-fn place_image(asset_server: Res<AssetServer>, parent: &mut ChildBuilder) {
-    let icon = asset_server.load("poker-title.png");
+fn place_image(parent: &mut ChildBuilder) {
     parent.spawn(ImageBundle {
         style: Style {
             width: Val::Px(350.0),
             ..default()
         },
-        image: UiImage::new(icon),
+        image: IconLoader::default().get_image(),
         ..default()
     });
 }
