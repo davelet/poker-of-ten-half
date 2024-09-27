@@ -23,27 +23,6 @@ pub fn show_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
 
             place_image(asset_server, parent);
 
-            // let button_style = Style {
-            //     width: Val::Px(250.0),
-            //     height: Val::Px(65.0),
-            //     margin: UiRect::all(Val::Px(20.0)),
-            //     justify_content: JustifyContent::Center,
-            //     align_items: AlignItems::Center,
-            //     ..default()
-            // };
-            // let button_icon_style = Style {
-            //     width: Val::Px(30.0),
-            //     // This takes the icons out of the flexbox flow, to be positioned exactly
-            //     position_type: PositionType::Absolute,
-            //     // The icon will be close to the left border of the button
-            //     left: Val::Px(10.0),
-            //     ..default()
-            // };
-            // let button_text_style = TextStyle {
-            //     font_size: 40.0,
-            //     color: TEXT_COLOR,
-            //     ..default()
-            // };
             place_buttons(parent);
         });
 }
@@ -63,7 +42,6 @@ fn place_buttons(parent: &mut ChildBuilder) {
             // 第一行放两个按钮
             p.spawn(NodeBundle {
                 style: Style {
-                    flex_direction: FlexDirection::Row,
                     align_items: AlignItems::Center,
                     ..default()
                 },
@@ -85,19 +63,47 @@ fn place_buttons(parent: &mut ChildBuilder) {
             ;
 
             // 第二行放开始
-            p.spawn(ButtonBundle {
-                style: Style {
-                    width: Val::Px(150.0),
-                    justify_content: JustifyContent::Center,
-                    align_items: AlignItems::Center,
+            p.spawn((
+                ButtonBundle {
+                    style: Style {
+                        width: Val::Px(250.0),
+                        flex_direction: FlexDirection::Column,
+                        justify_content: JustifyContent::Center,
+                        align_items: AlignItems::Center,
+                        ..Default::default()
+                    },
+                    background_color: START_BUTTON_NORMAL_COLOR,
                     ..Default::default()
                 },
-                background_color: START_BUTTON_NORMAL_COLOR,
-                ..Default::default()
-            })
+                ButtonOnMenuPage::StartGameButton,
+            ))
             .with_children(|parent| {
                 parent.spawn(TextBundle::from_section(
-                    "SG",
+                    START_BUTTON_TEXT,
+                    HanTextStyle::default()
+                        .with_color(TEXT_COLOR)
+                        .with_font_size(40.0)
+                        .get_style(),
+                ));
+            });
+
+            p.spawn((
+                ButtonBundle {
+                    style: Style {
+                        width: Val::Px(250.0),
+                        flex_direction: FlexDirection::Column,
+                        justify_content: JustifyContent::Center,
+                        align_items: AlignItems::Center,
+                        margin: UiRect::top(Val::Px(20.0)),
+                        ..Default::default()
+                    },
+                    ..Default::default()
+                },
+                ButtonOnMenuPage::ExitGameButton,
+            ))
+            .with_children(|parent| {
+                parent.spawn(TextBundle::from_section(
+                    EXIT_BUTTON_TEXT,
                     HanTextStyle::default()
                         .with_color(TEXT_COLOR)
                         .with_font_size(40.0)
@@ -147,18 +153,30 @@ fn place_title(parent: &mut ChildBuilder) {
 }
 
 pub fn menu_action(
-    mut interaction_query: Query<(&Interaction, &mut BackgroundColor), (Changed<Interaction>, With<Button>)>,
+    mut interaction_query: Query<
+        (&Interaction, &mut BackgroundColor, &ButtonOnMenuPage),
+        (Changed<Interaction>, With<Button>),
+    >,
     mut app_exit_events: EventWriter<AppExit>,
     mut game_state: ResMut<NextState<GameState>>,
 ) {
-    for (interaction, mut color) in &mut interaction_query {
-        if *interaction == Interaction::Pressed {
-            *color = DARK_GREY.into();
-            app_exit_events.send(AppExit::Success);
-        } else if *interaction == Interaction::Hovered {
-            *color = START_BUTTON_HOVER_COLOR.into(); 
-        } else {
-            *color = START_BUTTON_NORMAL_COLOR;
+    for (interaction, mut color, btn_tag) in &mut interaction_query {
+        match (btn_tag, *interaction) {
+            (ButtonOnMenuPage::StartGameButton, Interaction::Pressed) => {
+                game_state.set(GameState::Game);
+            }
+            (ButtonOnMenuPage::StartGameButton, Interaction::Hovered) => {
+                *color = START_BUTTON_HOVER_COLOR.into();
+            }
+            (ButtonOnMenuPage::ExitGameButton, Interaction::Hovered) => {
+                *color = DARK_GREY.into();
+            }
+            (ButtonOnMenuPage::ExitGameButton, Interaction::Pressed) => {
+                app_exit_events.send(AppExit::Success);
+            }
+            _ => {
+                *color = START_BUTTON_NORMAL_COLOR;
+            }
         }
     }
 }

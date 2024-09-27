@@ -1,4 +1,4 @@
-use bevy::{asset::Handle, color::{palettes::css::{CRIMSON, LIGHT_BLUE}, Color}, text::Font, ui::BackgroundColor};
+use bevy::{asset::Handle, color::{palettes::css::*, Color}, text::Font, ui::BackgroundColor};
 
 
 
@@ -7,6 +7,8 @@ pub const APP_FONT: &str = "Alibaba-PuHuiTi-Regular.otf";
 pub static mut HAN_FONT_OPTION: Option<Handle<Font>> = None;
 
 pub const TEXT_COLOR: Color = Color::srgb(0.9, 0.9, 0.9);
+pub const START_BUTTON_TEXT: &str = "はじめる";
+pub const EXIT_BUTTON_TEXT: &str = "終了";
 pub const START_BUTTON_NORMAL_COLOR: BackgroundColor = BackgroundColor(Color::Srgba(CRIMSON));
-pub const START_BUTTON_HOVER_COLOR: BackgroundColor = BackgroundColor(Color::Srgba(LIGHT_BLUE));
+pub const START_BUTTON_HOVER_COLOR: BackgroundColor = BackgroundColor(Color::Srgba(GREEN));
 // pub const START_BUTTON_CLICK_COLOR: BackgroundColor = BackgroundColor(Color::Srgba(CRIMSON));
