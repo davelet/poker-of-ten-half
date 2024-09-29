@@ -9,8 +9,9 @@ pub static mut HAN_FONT_OPTION: Option<Handle<Font>> = None;
 pub static mut APP_ICON_IMAGE: Option<Handle<Image>> = None;
 
 pub const TEXT_COLOR: Color = Color::srgb(0.9, 0.9, 0.9);
-pub const START_BUTTON_TEXT: &str = "はじめる";
-pub const EXIT_BUTTON_TEXT: &str = "終了";
+pub const START_BUTTON_TEXT: &str = "来一局";
+pub const EXIT_BUTTON_TEXT: &str = "退出程序";
+pub const RETURN_TO_MENU_BUTTON_TEXT: &str = "返回前页";
 pub const START_BUTTON_NORMAL_COLOR: BackgroundColor = BackgroundColor(Color::Srgba(CRIMSON));
 pub const START_BUTTON_HOVER_COLOR: BackgroundColor = BackgroundColor(Color::Srgba(GREEN));
 // pub const START_BUTTON_CLICK_COLOR: BackgroundColor = BackgroundColor(Color::Srgba(CRIMSON));
