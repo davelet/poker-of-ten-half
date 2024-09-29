@@ -54,7 +54,8 @@ pub fn game_update(
             }
             (ButtonOnGamePage::BackMenuButton, Interaction::None) => {
                 *color = LIGHT_BLUE.into();
-            }
+            },
+            _ => {}
         }
     }
 }

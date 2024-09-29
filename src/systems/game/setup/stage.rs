@@ -1,5 +1,7 @@
 use bevy::{color::palettes::css::*, prelude::*};
 
+use crate::{components::prelude::*, constants::*, HanTextStyle};
+
 pub fn place_stage(parent: &mut ChildBuilder) {
     parent
         .spawn(NodeBundle {
@@ -37,18 +39,17 @@ fn place_north_spot(parent: &mut ChildBuilder) {
             ..default()
         })
         .with_children(|parent| {
-            parent
-                .spawn(NodeBundle {
-                    style: Style {
-                        width: Val::Percent(40.0),
-                        height: Val::Percent(100.0),
-                        align_items: AlignItems::Center,
-                        justify_content: JustifyContent::Center,
-                        ..default()
-                    },
-                    background_color: PURPLE.into(),
+            parent.spawn(NodeBundle {
+                style: Style {
+                    width: Val::Percent(40.0),
+                    height: Val::Percent(100.0),
+                    align_items: AlignItems::Center,
+                    justify_content: JustifyContent::Center,
                     ..default()
-                });
+                },
+                background_color: PURPLE.into(),
+                ..default()
+            });
         });
 }
 // 中间的包括左边、中桌、右边
@@ -67,45 +68,42 @@ fn place_center_line(parent: &mut ChildBuilder) {
             ..default()
         })
         .with_children(|parent| {
-            parent
-                .spawn(NodeBundle {
-                    style: Style {
-                        width: Val::Percent(30.0),
-                        height: Val::Percent(100.0),
-                        align_items: AlignItems::Center,
-                        justify_content: JustifyContent::Center,
-                        ..default()
-                    },
-                    background_color: GREEN_YELLOW.into(),
+            parent.spawn(NodeBundle {
+                style: Style {
+                    width: Val::Percent(30.0),
+                    height: Val::Percent(100.0),
+                    align_items: AlignItems::Center,
+                    justify_content: JustifyContent::Center,
                     ..default()
-                });
-                
-                parent
-                .spawn(NodeBundle {
-                    style: Style {
-                        width: Val::Percent(40.0),
-                        height: Val::Percent(100.0),
-                        align_items: AlignItems::Center,
-                        justify_content: JustifyContent::Center,
-                        margin: UiRect::all(Val::Px(10.0)),
-                        ..default()
-                    },
-                    background_color: WHITE.into(),
+                },
+                background_color: GREEN_YELLOW.into(),
+                ..default()
+            });
+
+            parent.spawn(NodeBundle {
+                style: Style {
+                    width: Val::Percent(40.0),
+                    height: Val::Percent(100.0),
+                    align_items: AlignItems::Center,
+                    justify_content: JustifyContent::Center,
+                    margin: UiRect::all(Val::Px(10.0)),
                     ..default()
-                });
-                
-                parent
-                .spawn(NodeBundle {
-                    style: Style {
-                        width: Val::Percent(30.0),
-                        height: Val::Percent(100.0),
-                        align_items: AlignItems::Center,
-                        justify_content: JustifyContent::Center,
-                        ..default()
-                    },
-                    background_color: PINK.into(),
+                },
+                background_color: WHITE.into(),
+                ..default()
+            });
+
+            parent.spawn(NodeBundle {
+                style: Style {
+                    width: Val::Percent(30.0),
+                    height: Val::Percent(100.0),
+                    align_items: AlignItems::Center,
+                    justify_content: JustifyContent::Center,
                     ..default()
-                });
+                },
+                background_color: PINK.into(),
+                ..default()
+            });
         });
 }
 
@@ -117,24 +115,79 @@ fn place_south_spot(parent: &mut ChildBuilder) {
                 height: Val::Percent(30.0),
                 align_items: AlignItems::Center,
                 justify_content: JustifyContent::Center,
-                flex_direction: FlexDirection::Column,
                 ..default()
             },
-            // background_color: DARK_ORANGE.into(),
+            ..default()
+        })
+        .with_children(|parent| {
+            let style = HanTextStyle::default()
+                .with_color(bevy::prelude::Color::Srgba(BLACK))
+                .with_font_size(30.0)
+                .get_style();
+            build_game_button_area(
+                parent,
+                FlexDirection::RowReverse,
+                style.clone(),
+                RENEW_GAME_BUTTON_TEXT,
+                ButtonOnGamePage::RenewGameButton,
+            );
+
+            parent.spawn(NodeBundle {
+                style: Style {
+                    width: Val::Percent(40.0),
+                    height: Val::Percent(100.0),
+                    align_items: AlignItems::Center,
+                    justify_content: JustifyContent::Center,
+                    ..default()
+                },
+                background_color: LIGHT_CORAL.into(),
+                ..default()
+            });
+
+            build_game_button_area(
+                parent,
+                FlexDirection::Row,
+                style.clone(),
+                DEAL_POKER_BUTTON_TEXT,
+                ButtonOnGamePage::DealPokerButton,
+            );
+        });
+}
+
+fn build_game_button_area(
+    parent: &mut ChildBuilder,
+    flex_direction: FlexDirection,
+    style: TextStyle,
+    text: &str,
+    button_on_game_page: ButtonOnGamePage,
+) {
+    parent
+        .spawn(NodeBundle {
+            style: Style {
+                width: Val::Percent(30.0),
+                height: Val::Percent(100.0),
+                flex_direction,
+                margin: UiRect::all(Val::Px(10.0)),
+                ..default()
+            },
             ..default()
         })
         .with_children(|parent| {
             parent
                 .spawn(NodeBundle {
                     style: Style {
-                        width: Val::Percent(40.0),
                         height: Val::Percent(100.0),
-                        align_items: AlignItems::Center,
-                        justify_content: JustifyContent::Center,
+                        flex_direction: FlexDirection::ColumnReverse,
                         ..default()
                     },
-                    background_color: LIGHT_CORAL.into(),
                     ..default()
+                })
+                .with_children(|parent| {
+                    parent
+                        .spawn((ButtonBundle::default(), button_on_game_page))
+                        .with_children(|parent| {
+                            parent.spawn(TextBundle::from_section(text, style.clone()));
+                        });
                 });
         });
 }
