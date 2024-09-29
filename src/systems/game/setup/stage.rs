@@ -1,4 +1,4 @@
-use bevy::{color::palettes::css::*, prelude::*};
+use bevy::{color::palettes::css::*, math::bool, prelude::*};
 
 use crate::{components::prelude::*, constants::*, HanTextStyle};
 
@@ -19,13 +19,13 @@ pub fn place_stage(parent: &mut ChildBuilder) {
         })
         .with_children(|parent| {
             // 三行布局：对面、中、自己。其中中间的包括左边、中桌、右边
-            place_north_spot(parent);
+            place_north_line(parent);
             place_center_line(parent);
-            place_south_spot(parent);
+            place_south_line(parent);
         });
 }
 
-fn place_north_spot(parent: &mut ChildBuilder) {
+fn place_north_line(parent: &mut ChildBuilder) {
     parent
         .spawn(NodeBundle {
             style: Style {
@@ -39,17 +39,7 @@ fn place_north_spot(parent: &mut ChildBuilder) {
             ..default()
         })
         .with_children(|parent| {
-            parent.spawn(NodeBundle {
-                style: Style {
-                    width: Val::Percent(40.0),
-                    height: Val::Percent(100.0),
-                    align_items: AlignItems::Center,
-                    justify_content: JustifyContent::Center,
-                    ..default()
-                },
-                background_color: PURPLE.into(),
-                ..default()
-            });
+            spawn_player(parent, PURPLE, FlexDirection::Column, false);
         });
 }
 // 中间的包括左边、中桌、右边
@@ -68,17 +58,7 @@ fn place_center_line(parent: &mut ChildBuilder) {
             ..default()
         })
         .with_children(|parent| {
-            parent.spawn(NodeBundle {
-                style: Style {
-                    width: Val::Percent(30.0),
-                    height: Val::Percent(100.0),
-                    align_items: AlignItems::Center,
-                    justify_content: JustifyContent::Center,
-                    ..default()
-                },
-                background_color: GREEN_YELLOW.into(),
-                ..default()
-            });
+            spawn_player(parent, GREEN_YELLOW, FlexDirection::ColumnReverse, true);
 
             parent.spawn(NodeBundle {
                 style: Style {
@@ -93,21 +73,11 @@ fn place_center_line(parent: &mut ChildBuilder) {
                 ..default()
             });
 
-            parent.spawn(NodeBundle {
-                style: Style {
-                    width: Val::Percent(30.0),
-                    height: Val::Percent(100.0),
-                    align_items: AlignItems::Center,
-                    justify_content: JustifyContent::Center,
-                    ..default()
-                },
-                background_color: PINK.into(),
-                ..default()
-            });
+            spawn_player(parent, PINK, FlexDirection::ColumnReverse, true);
         });
 }
 
-fn place_south_spot(parent: &mut ChildBuilder) {
+fn place_south_line(parent: &mut ChildBuilder) {
     parent
         .spawn(NodeBundle {
             style: Style {
@@ -124,7 +94,7 @@ fn place_south_spot(parent: &mut ChildBuilder) {
                 .with_color(bevy::prelude::Color::Srgba(BLACK))
                 .with_font_size(30.0)
                 .get_style();
-            build_game_button_area(
+            spawn_game_button(
                 parent,
                 FlexDirection::RowReverse,
                 style.clone(),
@@ -132,19 +102,9 @@ fn place_south_spot(parent: &mut ChildBuilder) {
                 ButtonOnGamePage::RenewGameButton,
             );
 
-            parent.spawn(NodeBundle {
-                style: Style {
-                    width: Val::Percent(40.0),
-                    height: Val::Percent(100.0),
-                    align_items: AlignItems::Center,
-                    justify_content: JustifyContent::Center,
-                    ..default()
-                },
-                background_color: LIGHT_CORAL.into(),
-                ..default()
-            });
+            spawn_player(parent, LIGHT_CORAL, FlexDirection::ColumnReverse, false);
 
-            build_game_button_area(
+            spawn_game_button(
                 parent,
                 FlexDirection::Row,
                 style.clone(),
@@ -154,7 +114,29 @@ fn place_south_spot(parent: &mut ChildBuilder) {
         });
 }
 
-fn build_game_button_area(
+fn spawn_player(
+    parent: &mut ChildBuilder,
+    bg_color: Srgba,
+    flex_direction: FlexDirection,
+    side_position: bool,
+) {
+    parent
+        .spawn(NodeBundle {
+            style: Style {
+                width: Val::Percent(if side_position { 30.0 } else { 40.0 }),
+                height: Val::Percent(100.0),
+                align_items: AlignItems::Center,
+                justify_content: JustifyContent::Center,
+                flex_direction,
+                ..default()
+            },
+            background_color: bg_color.into(),
+            ..default()
+        })
+        .with_children(|parent| {});
+}
+
+fn spawn_game_button(
     parent: &mut ChildBuilder,
     flex_direction: FlexDirection,
     style: TextStyle,
