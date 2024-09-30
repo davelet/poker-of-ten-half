@@ -59,3 +59,24 @@ pub fn game_update(
         }
     }
 }
+
+pub fn game_key_input_system(
+    keyboard_input: Res<ButtonInput<KeyCode>>,
+    mut button_query: Query<(&mut BackgroundColor, &ButtonOnGamePage), With<Button>>,
+    mut app_exit_events: EventWriter<AppExit>,
+    mut game_state: ResMut<NextState<GameState>>,
+) {
+
+    if keyboard_input.just_pressed(KeyCode::KeyB) {
+        for (mut color, btn) in button_query.iter_mut() {
+            match btn {
+                ButtonOnGamePage::BackMenuButton => panic!(),
+                _ => todo!(),
+            }
+        }
+    }
+
+    if keyboard_input.just_pressed(KeyCode::KeyQ) {
+        app_exit_events.send(AppExit::Success);
+    }
+}

@@ -179,3 +179,33 @@ pub fn menu_action(
         }
     }
 }
+
+pub fn menu_key_input_system(
+    keyboard_input: Res<ButtonInput<KeyCode>>,
+    mut button_query: Query<(&mut BackgroundColor, &ButtonOnMenuPage), With<Button>>,
+    mut app_exit_events: EventWriter<AppExit>,
+    mut game_state: ResMut<NextState<GameState>>,
+) {
+    // if keyboard_input.pressed(KeyCode::KeyA) {
+    //     info!("'A' currently pressed");
+    // }
+
+    if keyboard_input.just_pressed(KeyCode::KeyC) {
+        for (mut color, btn) in button_query.iter_mut() {
+            match btn {
+                ButtonOnMenuPage::StartGameButton => {
+                    *color = START_BUTTON_HOVER_COLOR.into();
+                    game_state.set(GameState::Game);
+                },
+                ButtonOnMenuPage::ExitGameButton => (),
+            }
+        }
+    }
+
+    if keyboard_input.just_pressed(KeyCode::KeyQ) {
+        app_exit_events.send(AppExit::Success);
+    }
+    // if keyboard_input.just_released(KeyCode::KeyA) {
+    //     info!("'A' just released");
+    // }
+}
