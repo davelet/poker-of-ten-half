@@ -1,4 +1,4 @@
-use bevy::{color::palettes::css::*, math::bool, prelude::*};
+use bevy::{color::palettes::css::*, math::bool, prelude::*, scene::ron::de};
 
 use crate::{components::prelude::*, constants::*, HanTextStyle};
 
@@ -39,7 +39,7 @@ fn place_north_line(parent: &mut ChildBuilder) {
             ..default()
         })
         .with_children(|parent| {
-            spawn_player(parent, PURPLE, FlexDirection::Column, false);
+            spawn_player(parent, MEDIUM_PURPLE, FlexDirection::Column, false, true);
         });
 }
 // 中间的包括左边、中桌、右边
@@ -58,7 +58,13 @@ fn place_center_line(parent: &mut ChildBuilder) {
             ..default()
         })
         .with_children(|parent| {
-            spawn_player(parent, GREEN_YELLOW, FlexDirection::ColumnReverse, true);
+            spawn_player(
+                parent,
+                GREEN_YELLOW,
+                FlexDirection::ColumnReverse,
+                true,
+                false,
+            );
 
             parent.spawn(NodeBundle {
                 style: Style {
@@ -73,7 +79,7 @@ fn place_center_line(parent: &mut ChildBuilder) {
                 ..default()
             });
 
-            spawn_player(parent, PINK, FlexDirection::ColumnReverse, true);
+            spawn_player(parent, PINK, FlexDirection::ColumnReverse, true, false);
         });
 }
 
@@ -102,7 +108,13 @@ fn place_south_line(parent: &mut ChildBuilder) {
                 ButtonOnGamePage::RenewGameButton,
             );
 
-            spawn_player(parent, LIGHT_CORAL, FlexDirection::ColumnReverse, false);
+            spawn_player(
+                parent,
+                LIGHT_CORAL,
+                FlexDirection::ColumnReverse,
+                false,
+                true,
+            );
 
             spawn_game_button(
                 parent,
@@ -119,6 +131,7 @@ fn spawn_player(
     bg_color: Srgba,
     flex_direction: FlexDirection,
     side_position: bool,
+    has_content: bool,
 ) {
     parent
         .spawn(NodeBundle {
@@ -133,7 +146,19 @@ fn spawn_player(
             background_color: bg_color.into(),
             ..default()
         })
-        .with_children(|parent| {});
+        .with_children(|parent| {
+            let style = HanTextStyle::default()
+                .with_color(bevy::prelude::Color::Srgba(BLACK))
+                .with_font_size(20.0)
+                .get_style();
+            if has_content {
+                parent.spawn(TextBundle::from_section("Player", style.clone()));
+                parent.spawn(TextBundle::from_section("豆子100", style.clone()));
+                spawn_cards(parent);
+            } else {
+                parent.spawn(TextBundle::from_section("Nobody", style));
+            }
+        });
 }
 
 fn spawn_game_button(
@@ -171,5 +196,38 @@ fn spawn_game_button(
                             parent.spawn(TextBundle::from_section(text, style.clone()));
                         });
                 });
+        });
+}
+
+fn spawn_cards(parent: &mut ChildBuilder) {
+    parent
+        .spawn(NodeBundle {
+            style: Style { ..default() },
+            background_color: WHITE.into(),
+            ..default()
+        })
+        .with_children(|parent| {
+            for _ in 1..=5 {
+                let style = HanTextStyle::default()
+                .with_color(bevy::prelude::Color::Srgba(BLACK))
+                .with_font_size(30.0)
+                .get_style();
+                parent
+                    .spawn(NodeBundle {
+                        style: Style {
+                            width: Val::Percent(20.0),
+                            //    height: Val::Percent(30.0),
+                            margin: UiRect::all(Val::Px(10.0)),
+                            flex_direction: FlexDirection::Column,
+                            ..default()
+                        },
+                        border_color: BLACK.into(),
+                        ..default()
+                    })
+                    .with_children(|parent| {
+                        parent.spawn(TextBundle::from_section("方片", style.clone()));
+                        parent.spawn(TextBundle::from_section("3", style.clone()));
+                    });
+            }
         });
 }

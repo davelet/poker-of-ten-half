@@ -56,9 +56,6 @@ impl std::fmt::Display for PokerReducedPoint {
 }
 
 
-//
-//
-
 /// 比赛豆子
 #[derive(Component)]
 pub struct MatchCoin;
