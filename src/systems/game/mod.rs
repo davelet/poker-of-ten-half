@@ -69,11 +69,15 @@ pub fn game_key_input_system(
 
     if keyboard_input.just_pressed(KeyCode::KeyB) {
         for (mut color, btn) in button_query.iter_mut() {
-            match btn {
-                ButtonOnGamePage::BackMenuButton => panic!(),
-                _ => todo!(),
+            if let ButtonOnGamePage::BackMenuButton = btn {
+                *color = DARK_BLUE.into();
+                break;
             }
         }
+    }
+
+    if keyboard_input.just_released(KeyCode::KeyB) {
+        game_state.set(GameState::Menu);
     }
 
     if keyboard_input.just_pressed(KeyCode::KeyQ) {

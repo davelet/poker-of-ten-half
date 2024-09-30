@@ -1,3 +1,5 @@
+use std::{thread::sleep, time::Duration};
+
 use bevy::{color::palettes::css::*, prelude::*};
 
 use crate::{components::prelude::*, constants::*, GameState, HanTextStyle, IconLoader};
@@ -186,26 +188,19 @@ pub fn menu_key_input_system(
     mut app_exit_events: EventWriter<AppExit>,
     mut game_state: ResMut<NextState<GameState>>,
 ) {
-    // if keyboard_input.pressed(KeyCode::KeyA) {
-    //     info!("'A' currently pressed");
-    // }
-
     if keyboard_input.just_pressed(KeyCode::KeyC) {
         for (mut color, btn) in button_query.iter_mut() {
-            match btn {
-                ButtonOnMenuPage::StartGameButton => {
-                    *color = START_BUTTON_HOVER_COLOR.into();
-                    game_state.set(GameState::Game);
-                },
-                ButtonOnMenuPage::ExitGameButton => (),
+            if let ButtonOnMenuPage::StartGameButton = btn {
+                *color = START_BUTTON_HOVER_COLOR.into();
+                break;
             }
         }
+    }
+    if keyboard_input.just_released(KeyCode::KeyC) {
+        game_state.set(GameState::Game);
     }
 
     if keyboard_input.just_pressed(KeyCode::KeyQ) {
         app_exit_events.send(AppExit::Success);
     }
-    // if keyboard_input.just_released(KeyCode::KeyA) {
-    //     info!("'A' just released");
-    // }
 }
