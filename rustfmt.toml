@@ -1,0 +1,42 @@
+# rustfmt.toml
+edition = "2021" # Rust 版本
+
+# 代码宽度配置
+max_width = 140 # 最大行宽
+hard_tabs = false # 不使用硬制表符
+tab_spaces = 4 # 使用 4 个空格代替制表符
+
+# 代码风格配置
+newline_style = "Unix" # 使用 Unix 风格的换行符
+indent_style = "Block" # 使用块缩进
+use_small_heuristics = "Max" # 尽可能使用小括号
+match_arm_blocks = true # 匹配臂中的块体应该有花括号
+normalize_comments = true # 标准化注释
+
+# 排序和分组
+reorder_imports = true # 重新排序导入
+reorder_impl_items = true # 重新排序 impl 项
+reorder_modules = false # 不重新排序mod
+group_imports = "StdExternalCrate" # 将导入分组
+
+# 空格和尾随逗号
+binop_separator = "Front" # 二元操作符周围的空格
+trailing_comma = "Always" # 总是在多行结构中添加尾随逗号
+match_block_trailing_comma = true # 在匹配块中添加尾随逗号
+force_multiline_blocks = true # 强制多行块体
+
+# 结构体和元组
+struct_lit_single_line = true # 单行结构体字面量
+struct_field_align_threshold = 20 # 字段对齐
+
+# 逗号分隔的列表
+where_single_line = true # 单行 where 子句
+enum_discrim_align_threshold = 0 # 枚举变体对齐阈值
+
+# 文档注释
+comment_width = 80 # 文档注释的最大宽度
+
+# 其他
+merge_imports = true # 合并相同的导入
+format_macro_matchers = true # 格式化宏匹配器
+format_macro_bodies = true # 格式化宏体

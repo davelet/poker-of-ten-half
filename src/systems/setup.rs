@@ -4,16 +4,11 @@ use crate::components::prelude::*;
 
 pub fn setup(mut commands: Commands, _asset_server: Res<AssetServer>) {
     commands.spawn(Camera2dBundle::default());
-    
+
     create_deck(commands);
 }
 pub fn create_deck(mut commands: Commands) {
-    let suits_arr = [
-        PokerSuiteEnum::Club,
-        PokerSuiteEnum::Diamond,
-        PokerSuiteEnum::Heart,
-        PokerSuiteEnum::Spade,
-    ];
+    let suits_arr = [PokerSuiteEnum::Club, PokerSuiteEnum::Diamond, PokerSuiteEnum::Heart, PokerSuiteEnum::Spade];
     for suite in suits_arr {
         for rank in 1..=13 {
             commands.spawn((
@@ -32,21 +27,13 @@ pub fn create_deck(mut commands: Commands) {
     commands.spawn((
         // PokerCard,
         CardRank { rank: -1 },
-        CardType {
-            suite: PokerSuiteEnum::Joker,
-        },
-        CardPoint {
-            point_type: PokerReducedPoint::HalfPoint,
-        },
+        CardType { suite: PokerSuiteEnum::Joker },
+        CardPoint { point_type: PokerReducedPoint::HalfPoint },
     ));
     commands.spawn((
         // PokerCard,
         CardRank { rank: -2 },
-        CardType {
-            suite: PokerSuiteEnum::Joker,
-        },
-        CardPoint {
-            point_type: PokerReducedPoint::HalfPoint,
-        },
+        CardType { suite: PokerSuiteEnum::Joker },
+        CardPoint { point_type: PokerReducedPoint::HalfPoint },
     ));
 }

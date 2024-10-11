@@ -1,21 +1,13 @@
 use bevy::{color::palettes::css::*, prelude::*};
 
-use crate::{constants::*, HanTextStyle};
 use crate::components::prelude::*;
-
+use crate::{constants::*, HanTextStyle};
 
 pub fn place_header(parent: &mut ChildBuilder) {
-    let style = HanTextStyle::default()
-        .with_color(bevy::prelude::Color::Srgba(BLACK))
-        .with_font_size(30.0)
-        .get_style();
+    let style = HanTextStyle::default().with_color(bevy::prelude::Color::Srgba(BLACK)).with_font_size(30.0).get_style();
     parent
         .spawn(NodeBundle {
-            style: Style {
-                align_items: AlignItems::Center,
-                width: Val::Percent(100.0),
-                ..default()
-            },
+            style: Style { align_items: AlignItems::Center, width: Val::Percent(100.0), ..default() },
             background_color: DARK_ORANGE.into(),
             ..default()
         })
@@ -36,10 +28,7 @@ pub fn place_header(parent: &mut ChildBuilder) {
                     ButtonOnGamePage::BackMenuButton,
                 ))
                 .with_children(|parent| {
-                    parent.spawn(TextBundle::from_section(
-                        RETURN_TO_MENU_BUTTON_TEXT,
-                        style.clone(),
-                    ));
+                    parent.spawn(TextBundle::from_section(RETURN_TO_MENU_BUTTON_TEXT, style.clone()));
                 });
 
             parent

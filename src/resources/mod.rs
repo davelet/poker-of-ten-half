@@ -36,14 +36,9 @@ pub struct HanTextStyle(pub TextStyle);
 impl Default for HanTextStyle {
     fn default() -> Self {
         if let Some(hf) = unsafe { crate::constants::HAN_FONT_OPTION.clone() } {
-            return Self(TextStyle {
-                font: hf,
-                ..Default::default()
-            });
+            return Self(TextStyle { font: hf, ..Default::default() });
         }
-        Self(TextStyle {
-            ..Default::default()
-        })
+        Self(TextStyle { ..Default::default() })
     }
 }
 

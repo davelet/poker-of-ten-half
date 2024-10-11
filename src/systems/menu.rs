@@ -1,4 +1,3 @@
-
 use bevy::{color::palettes::css::*, prelude::*};
 
 use crate::{components::prelude::*, constants::*, GameState, HanTextStyle, IconLoader};
@@ -81,10 +80,7 @@ fn place_buttons(parent: &mut ChildBuilder) {
             .with_children(|parent| {
                 parent.spawn(TextBundle::from_section(
                     START_BUTTON_TEXT,
-                    HanTextStyle::default()
-                        .with_color(TEXT_COLOR)
-                        .with_font_size(40.0)
-                        .get_style(),
+                    HanTextStyle::default().with_color(TEXT_COLOR).with_font_size(40.0).get_style(),
                 ));
             });
 
@@ -105,20 +101,14 @@ fn place_buttons(parent: &mut ChildBuilder) {
             .with_children(|parent| {
                 parent.spawn(TextBundle::from_section(
                     EXIT_BUTTON_TEXT,
-                    HanTextStyle::default()
-                        .with_color(TEXT_COLOR)
-                        .with_font_size(40.0)
-                        .get_style(),
+                    HanTextStyle::default().with_color(TEXT_COLOR).with_font_size(40.0).get_style(),
                 ));
             });
         });
 }
 fn place_image(parent: &mut ChildBuilder) {
     parent.spawn(ImageBundle {
-        style: Style {
-            width: Val::Px(350.0),
-            ..default()
-        },
+        style: Style { width: Val::Px(350.0), ..default() },
         image: IconLoader::default().get_image(),
         ..default()
     });
@@ -127,36 +117,20 @@ fn place_image(parent: &mut ChildBuilder) {
 fn place_title(parent: &mut ChildBuilder) {
     parent
         .spawn(NodeBundle {
-            style: Style {
-                flex_direction: FlexDirection::Column,
-                align_items: AlignItems::Center,
-                ..default()
-            },
+            style: Style { flex_direction: FlexDirection::Column, align_items: AlignItems::Center, ..default() },
             background_color: bevy::color::palettes::css::DARK_GREEN.into(),
             ..default()
         })
         .with_children(|parent| {
             parent.spawn(
-                TextBundle::from_section(
-                    MENU_TITLE,
-                    HanTextStyle::default()
-                        .with_color(TEXT_COLOR)
-                        .with_font_size(80.0)
-                        .get_style(),
-                )
-                .with_style(Style {
-                    margin: UiRect::all(Val::Px(20.0)),
-                    ..default()
-                }),
+                TextBundle::from_section(MENU_TITLE, HanTextStyle::default().with_color(TEXT_COLOR).with_font_size(80.0).get_style())
+                    .with_style(Style { margin: UiRect::all(Val::Px(20.0)), ..default() }),
             );
         });
 }
 
 pub fn menu_action(
-    mut interaction_query: Query<
-        (&Interaction, &mut BackgroundColor, &ButtonOnMenuPage),
-        (Changed<Interaction>, With<Button>),
-    >,
+    mut interaction_query: Query<(&Interaction, &mut BackgroundColor, &ButtonOnMenuPage), (Changed<Interaction>, With<Button>)>,
     mut app_exit_events: EventWriter<AppExit>,
     mut game_state: ResMut<NextState<GameState>>,
 ) {
@@ -164,19 +138,19 @@ pub fn menu_action(
         match (btn_tag, *interaction) {
             (ButtonOnMenuPage::StartGameButton, Interaction::Pressed) => {
                 game_state.set(GameState::Game);
-            }
+            },
             (ButtonOnMenuPage::StartGameButton, Interaction::Hovered) => {
                 *color = START_BUTTON_HOVER_COLOR.into();
-            }
+            },
             (ButtonOnMenuPage::ExitGameButton, Interaction::Hovered) => {
                 *color = DARK_GREY.into();
-            }
+            },
             (ButtonOnMenuPage::ExitGameButton, Interaction::Pressed) => {
                 app_exit_events.send(AppExit::Success);
-            }
+            },
             _ => {
                 *color = START_BUTTON_NORMAL_COLOR;
-            }
+            },
         }
     }
 }

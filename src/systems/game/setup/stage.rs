@@ -58,13 +58,7 @@ fn place_center_line(parent: &mut ChildBuilder) {
             ..default()
         })
         .with_children(|parent| {
-            spawn_player(
-                parent,
-                GREEN_YELLOW,
-                FlexDirection::ColumnReverse,
-                true,
-                false,
-            );
+            spawn_player(parent, GREEN_YELLOW, FlexDirection::ColumnReverse, true, false);
 
             parent.spawn(NodeBundle {
                 style: Style {
@@ -96,43 +90,16 @@ fn place_south_line(parent: &mut ChildBuilder) {
             ..default()
         })
         .with_children(|parent| {
-            let style = HanTextStyle::default()
-                .with_color(bevy::prelude::Color::Srgba(BLACK))
-                .with_font_size(30.0)
-                .get_style();
-            spawn_game_button(
-                parent,
-                FlexDirection::RowReverse,
-                style.clone(),
-                RENEW_GAME_BUTTON_TEXT,
-                ButtonOnGamePage::RenewGameButton,
-            );
+            let style = HanTextStyle::default().with_color(bevy::prelude::Color::Srgba(BLACK)).with_font_size(30.0).get_style();
+            spawn_game_button(parent, FlexDirection::RowReverse, style.clone(), RENEW_GAME_BUTTON_TEXT, ButtonOnGamePage::RenewGameButton);
 
-            spawn_player(
-                parent,
-                LIGHT_CORAL,
-                FlexDirection::ColumnReverse,
-                false,
-                true,
-            );
+            spawn_player(parent, LIGHT_CORAL, FlexDirection::ColumnReverse, false, true);
 
-            spawn_game_button(
-                parent,
-                FlexDirection::Row,
-                style.clone(),
-                DEAL_POKER_BUTTON_TEXT,
-                ButtonOnGamePage::DealPokerButton,
-            );
+            spawn_game_button(parent, FlexDirection::Row, style.clone(), DEAL_POKER_BUTTON_TEXT, ButtonOnGamePage::DealPokerButton);
         });
 }
 
-fn spawn_player(
-    parent: &mut ChildBuilder,
-    bg_color: Srgba,
-    flex_direction: FlexDirection,
-    side_position: bool,
-    has_content: bool,
-) {
+fn spawn_player(parent: &mut ChildBuilder, bg_color: Srgba, flex_direction: FlexDirection, side_position: bool, has_content: bool) {
     parent
         .spawn(NodeBundle {
             style: Style {
@@ -147,10 +114,7 @@ fn spawn_player(
             ..default()
         })
         .with_children(|parent| {
-            let style = HanTextStyle::default()
-                .with_color(bevy::prelude::Color::Srgba(BLACK))
-                .with_font_size(20.0)
-                .get_style();
+            let style = HanTextStyle::default().with_color(bevy::prelude::Color::Srgba(BLACK)).with_font_size(20.0).get_style();
             if has_content {
                 parent.spawn(TextBundle::from_section("Player", style.clone()));
                 parent.spawn(TextBundle::from_section("豆子100", style.clone()));
@@ -182,52 +146,37 @@ fn spawn_game_button(
         .with_children(|parent| {
             parent
                 .spawn(NodeBundle {
-                    style: Style {
-                        height: Val::Percent(100.0),
-                        flex_direction: FlexDirection::ColumnReverse,
-                        ..default()
-                    },
+                    style: Style { height: Val::Percent(100.0), flex_direction: FlexDirection::ColumnReverse, ..default() },
                     ..default()
                 })
                 .with_children(|parent| {
-                    parent
-                        .spawn((ButtonBundle::default(), button_on_game_page))
-                        .with_children(|parent| {
-                            parent.spawn(TextBundle::from_section(text, style.clone()));
-                        });
+                    parent.spawn((ButtonBundle::default(), button_on_game_page)).with_children(|parent| {
+                        parent.spawn(TextBundle::from_section(text, style.clone()));
+                    });
                 });
         });
 }
 
 fn spawn_cards(parent: &mut ChildBuilder) {
-    parent
-        .spawn(NodeBundle {
-            style: Style { ..default() },
-            background_color: WHITE.into(),
-            ..default()
-        })
-        .with_children(|parent| {
-            for _ in 1..=5 {
-                let style = HanTextStyle::default()
-                .with_color(bevy::prelude::Color::Srgba(BLACK))
-                .with_font_size(30.0)
-                .get_style();
-                parent
-                    .spawn(NodeBundle {
-                        style: Style {
-                            width: Val::Percent(20.0),
-                            //    height: Val::Percent(30.0),
-                            margin: UiRect::all(Val::Px(10.0)),
-                            flex_direction: FlexDirection::Column,
-                            ..default()
-                        },
-                        border_color: BLACK.into(),
+    parent.spawn(NodeBundle { style: Style { ..default() }, background_color: WHITE.into(), ..default() }).with_children(|parent| {
+        for _ in 1..=5 {
+            let style = HanTextStyle::default().with_color(bevy::prelude::Color::Srgba(BLACK)).with_font_size(30.0).get_style();
+            parent
+                .spawn(NodeBundle {
+                    style: Style {
+                        width: Val::Percent(20.0),
+                        //    height: Val::Percent(30.0),
+                        margin: UiRect::all(Val::Px(10.0)),
+                        flex_direction: FlexDirection::Column,
                         ..default()
-                    })
-                    .with_children(|parent| {
-                        parent.spawn(TextBundle::from_section("方片", style.clone()));
-                        parent.spawn(TextBundle::from_section("3", style.clone()));
-                    });
-            }
-        });
+                    },
+                    border_color: BLACK.into(),
+                    ..default()
+                })
+                .with_children(|parent| {
+                    parent.spawn(TextBundle::from_section("方片", style.clone()));
+                    parent.spawn(TextBundle::from_section("3", style.clone()));
+                });
+        }
+    });
 }

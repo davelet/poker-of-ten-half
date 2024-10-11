@@ -8,8 +8,7 @@ pub fn splash_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     unsafe { crate::constants::HAN_FONT_OPTION = Some(font_handle) };
     let icon_handle = asset_server.load(crate::constants::APP_ICON);
     unsafe { crate::constants::APP_ICON_IMAGE = Some(icon_handle) };
-    
-    
+
     // Display the logo
     commands
         .spawn((
@@ -38,16 +37,10 @@ pub fn splash_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
             });
         });
     // Insert the timer as a resource
-    commands.insert_resource(SplashTimer {
-        timer: Timer::from_seconds(1.0, TimerMode::Once),
-    });
+    commands.insert_resource(SplashTimer { timer: Timer::from_seconds(1.0, TimerMode::Once) });
 }
 
-pub fn countdown(
-    mut game_state: ResMut<NextState<GameState>>,
-    time: Res<Time>,
-    mut timer: ResMut<SplashTimer>,
-) {
+pub fn countdown(mut game_state: ResMut<NextState<GameState>>, time: Res<Time>, mut timer: ResMut<SplashTimer>) {
     if timer.tick(time.delta()).finished() {
         game_state.set(GameState::Menu);
     }

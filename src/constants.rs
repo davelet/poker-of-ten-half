@@ -1,6 +1,10 @@
-use bevy::{asset::Handle, color::{palettes::css::*, Color}, prelude::Image, text::Font, ui::BackgroundColor};
-
-
+use bevy::{
+    asset::Handle,
+    color::{palettes::css::*, Color},
+    prelude::Image,
+    text::Font,
+    ui::BackgroundColor,
+};
 
 pub const MENU_TITLE: &str = "推十点半";
 pub const APP_FONT: &str = "Alibaba-PuHuiTi-Regular.otf";

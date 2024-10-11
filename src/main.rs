@@ -1,9 +1,9 @@
 // #![allow(dead_code)]
 
 use bevy::prelude::*;
+use plugins::prelude::*;
 use resources::prelude::*;
 use systems::prelude::*;
-use plugins::prelude::*;
 
 mod components;
 mod systems;
@@ -21,4 +21,3 @@ fn main() {
         .add_systems(Startup, setup)
         .run();
 }
-

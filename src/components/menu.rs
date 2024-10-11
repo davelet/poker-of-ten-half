@@ -8,4 +8,3 @@ pub enum ButtonOnMenuPage {
     StartGameButton,
     ExitGameButton,
 }
-
