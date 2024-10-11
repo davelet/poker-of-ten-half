@@ -9,9 +9,9 @@ pub static mut HAN_FONT_OPTION: Option<Handle<Font>> = None;
 pub static mut APP_ICON_IMAGE: Option<Handle<Image>> = None;
 
 pub const TEXT_COLOR: Color = Color::srgb(0.9, 0.9, 0.9);
-pub const START_BUTTON_TEXT: &str = "来一局";
-pub const EXIT_BUTTON_TEXT: &str = "退出程序";
-pub const RETURN_TO_MENU_BUTTON_TEXT: &str = "返回前页";
+pub const START_BUTTON_TEXT: &str = "来一局(C)";
+pub const EXIT_BUTTON_TEXT: &str = "退出程序(Q)";
+pub const RETURN_TO_MENU_BUTTON_TEXT: &str = "返回前页(B)";
 pub const RENEW_GAME_BUTTON_TEXT: &str = "重新开始";
 pub const DEAL_POKER_BUTTON_TEXT: &str = "发一张牌";
 pub const START_BUTTON_NORMAL_COLOR: BackgroundColor = BackgroundColor(Color::Srgba(CRIMSON));
