@@ -11,18 +11,18 @@ pub enum ButtonOnGamePage {
     DealPokerButton,
 }
 /// 牌数，A 2,3,4,5,6,7,8,9, 10，J Q K
-#[derive(Component)]
+#[derive(Component, Debug)]
 pub struct CardRank {
     pub rank: i8,
 }
 
 // 卡牌点数
-#[derive(Component)]
+#[derive(Component, Debug)]
 pub struct CardPoint {
     pub point_type: PokerReducedPoint,
 }
 
-#[derive(Component)]
+#[derive(Component, Debug)]
 pub struct CardType {
     pub suite: PokerSuiteEnum,
 }
@@ -58,3 +58,9 @@ impl std::fmt::Display for PokerReducedPoint {
 /// 比赛豆子
 #[derive(Component)]
 pub struct MatchCoin;
+
+#[derive(Component)]
+pub enum DeckArea {
+    AVAIL,
+    USED
+}

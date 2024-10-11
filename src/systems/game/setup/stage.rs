@@ -66,19 +66,65 @@ fn place_center_line(parent: &mut ChildBuilder) {
         });
 }
 
+// 中间拍桌，未发的和已弃的
 fn setup_deck_stage(parent: &mut ChildBuilder) {
-    parent.spawn(NodeBundle {
-        style: Style {
-            width: Val::Percent(40.0),
-            height: Val::Percent(100.0),
-            align_items: AlignItems::Center,
-            justify_content: JustifyContent::Center,
-            margin: UiRect::all(Val::Px(10.0)),
+    parent
+        .spawn(NodeBundle {
+            style: Style {
+                width: Val::Percent(40.0),
+                height: Val::Percent(100.0),
+                align_items: AlignItems::Center,
+                justify_content: JustifyContent::Center,
+                margin: UiRect::all(Val::Px(10.0)),
+                ..default()
+            },
+            background_color: WHITE.into(),
             ..default()
-        },
-        background_color: WHITE.into(),
-        ..default()
-    });
+        })
+        .with_children(|parent| {
+            parent
+                .spawn(NodeBundle {
+                    style: Style {
+                        width: Val::Percent(60.0),
+                        height: Val::Percent(40.0),
+                        align_items: AlignItems::Center,
+                        justify_content: JustifyContent::Center,
+                        margin: UiRect::all(Val::Px(30.0)),
+                        ..default()
+                    },
+                    background_color: LIGHT_SEA_GREEN.into(),
+                    ..default()
+                })
+                .with_children(|parent| {
+                    parent
+                        .spawn(TextBundle::from_section(
+                            "牌堆",
+                            HanTextStyle::default().with_color(bevy::prelude::Color::Srgba(BLACK)).with_font_size(80.0).get_style(),
+                        ))
+                        .insert(DeckArea::AVAIL);
+                });
+            parent
+                .spawn(NodeBundle {
+                    style: Style {
+                        width: Val::Percent(60.0),
+                        height: Val::Percent(40.0),
+                        align_items: AlignItems::Center,
+                        justify_content: JustifyContent::Center,
+                        margin: UiRect::all(Val::Px(30.0)),
+                        ..default()
+                    },
+                    background_color: LIGHT_SKY_BLUE.into(),
+                    ..default()
+                })
+                .with_children(|parent| {
+                    parent
+                        .spawn(TextBundle::from_section(
+                            "已弃牌",
+                            HanTextStyle::default().with_color(bevy::prelude::Color::Srgba(BLACK)).with_font_size(40.0).get_style(),
+                        ))
+                        .insert(DeckArea::USED);
+                });
+        });
 }
 
 fn place_south_line(parent: &mut ChildBuilder) {

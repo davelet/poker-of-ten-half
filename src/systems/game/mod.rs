@@ -30,6 +30,8 @@ pub fn game_setup(mut commands: Commands, _asset_server: Res<AssetServer>) {
 
 pub fn game_update(
     mut interaction_query: Query<(&Interaction, &mut BackgroundColor, &ButtonOnGamePage), (Changed<Interaction>, With<Button>)>,
+    mut poker_query: Query<(&CardRank, &CardType, &CardPoint)>,
+    mut deck_query: Query<&mut Text, With<DeckArea>>,
     mut app_exit_events: EventWriter<AppExit>,
     mut game_state: ResMut<NextState<GameState>>,
 ) {
@@ -54,6 +56,12 @@ pub fn game_update(
                 *color = LIGHT_BLUE.into();
             },
             _ => {},
+        }
+    }
+    for (rank, card_type, point) in poker_query.iter_mut() {
+        println!("{:?} {:?} {:?}", rank, card_type, point);
+        for deck_text in deck_query.iter_mut() {
+            println!("{:?}", deck_text.sections[0].value);
         }
     }
 }
