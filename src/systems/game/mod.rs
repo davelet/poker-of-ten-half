@@ -1,6 +1,7 @@
-use crate::{components::prelude::*, GameState};
 use bevy::{color::palettes::css::*, prelude::*};
 use setup::prelude::*;
+
+use crate::{components::prelude::*, GameState};
 
 mod setup;
 

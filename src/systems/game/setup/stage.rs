@@ -60,21 +60,25 @@ fn place_center_line(parent: &mut ChildBuilder) {
         .with_children(|parent| {
             spawn_player(parent, GREEN_YELLOW, FlexDirection::ColumnReverse, true, false);
 
-            parent.spawn(NodeBundle {
-                style: Style {
-                    width: Val::Percent(40.0),
-                    height: Val::Percent(100.0),
-                    align_items: AlignItems::Center,
-                    justify_content: JustifyContent::Center,
-                    margin: UiRect::all(Val::Px(10.0)),
-                    ..default()
-                },
-                background_color: WHITE.into(),
-                ..default()
-            });
+            setup_deck_stage(parent);
 
             spawn_player(parent, PINK, FlexDirection::ColumnReverse, true, false);
         });
+}
+
+fn setup_deck_stage(parent: &mut ChildBuilder) {
+    parent.spawn(NodeBundle {
+        style: Style {
+            width: Val::Percent(40.0),
+            height: Val::Percent(100.0),
+            align_items: AlignItems::Center,
+            justify_content: JustifyContent::Center,
+            margin: UiRect::all(Val::Px(10.0)),
+            ..default()
+        },
+        background_color: WHITE.into(),
+        ..default()
+    });
 }
 
 fn place_south_line(parent: &mut ChildBuilder) {

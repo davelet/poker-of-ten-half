@@ -1,8 +1,6 @@
 use bevy::{app::App, prelude::*};
 
-use crate::components::prelude::*;
-use crate::resources::prelude::*;
-use crate::systems::prelude::*;
+use crate::{components::prelude::*, resources::prelude::*, systems::prelude::*};
 
 pub mod prelude {
     pub use super::*;

@@ -1,7 +1,6 @@
 use bevy::{color::palettes::css::*, prelude::*};
 
-use crate::components::prelude::*;
-use crate::{constants::*, HanTextStyle};
+use crate::{components::prelude::*, constants::*, HanTextStyle};
 
 pub fn place_header(parent: &mut ChildBuilder) {
     let style = HanTextStyle::default().with_color(bevy::prelude::Color::Srgba(BLACK)).with_font_size(30.0).get_style();

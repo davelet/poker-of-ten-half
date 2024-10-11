@@ -21,7 +21,7 @@ group_imports = "StdExternalCrate" # 将导入分组
 
 # 空格和尾随逗号
 binop_separator = "Front" # 二元操作符周围的空格
-trailing_comma = "Always" # 总是在多行结构中添加尾随逗号
+# trailing_comma = "Always" # 总是在多行结构中添加尾随逗号
 match_block_trailing_comma = true # 在匹配块中添加尾随逗号
 force_multiline_blocks = true # 强制多行块体
 

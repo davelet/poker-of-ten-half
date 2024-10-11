@@ -1,7 +1,6 @@
 use bevy::prelude::*;
 
-use crate::components::prelude::*;
-use crate::resources::prelude::*;
+use crate::{components::prelude::*, resources::prelude::*};
 
 pub fn splash_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     let font_handle = asset_server.load::<Font>(crate::constants::APP_FONT);

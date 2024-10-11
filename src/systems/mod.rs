@@ -6,11 +6,7 @@ mod menu;
 mod game;
 
 pub mod prelude {
-    pub use super::despawn_screen;
-    pub use super::game::*;
-    pub use super::menu::*;
-    pub use super::setup::*;
-    pub use super::splash_screen::*;
+    pub use super::{despawn_screen, game::*, menu::*, setup::*, splash_screen::*};
 }
 
 pub fn despawn_screen<T: Component>(to_despawn: Query<Entity, With<T>>, mut commands: Commands) {
