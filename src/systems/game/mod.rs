@@ -6,13 +6,24 @@ use bevy::{
     },
     prelude::*,
 };
+use bevy_rand::prelude::*;
+use rand_core::RngCore;
 use setup::prelude::*;
 
-use crate::{components::prelude::*, AppState, GameState};
+use crate::{components::prelude::*, resources::prelude::*};
 
 mod setup;
 
-pub fn game_setup(mut commands: Commands, _asset_server: Res<AssetServer>) {
+pub fn shuffle_cards(mut commands: Commands, poker_query: Query<Entity, With<PokerCard>>, mut rng: ResMut<GlobalEntropy<WyRand>>) {
+    for card in poker_query.iter() {
+        let index = rng.next_u32();
+        commands.entity(card).insert(PokerCardOrder(index));
+    }
+
+    // todo 把乱的牌放上去
+}
+
+pub fn game_setup(mut commands: Commands) {
     commands
         .spawn((
             NodeBundle {
@@ -20,7 +31,6 @@ pub fn game_setup(mut commands: Commands, _asset_server: Res<AssetServer>) {
                     width: Val::Percent(100.0),
                     height: Val::Percent(100.0),
                     align_items: AlignItems::Center,
-                    // justify_content: JustifyContent::Start,
                     flex_direction: FlexDirection::Column,
                     ..default()
                 },
@@ -77,6 +87,12 @@ pub fn game_button_action(
             (ButtonOnGamePage::ExitGameButton, Interaction::None) => {
                 *color = LIGHT_GRAY.into();
             },
+            (ButtonOnGamePage::DealPokerButton, Interaction::None) => {
+                *color = Color::NONE.into();
+            },
+            (ButtonOnGamePage::DealPokerButton, Interaction::Hovered) => {
+                *color = LIGHT_SEA_GREEN.into();
+            },
             (ButtonOnGamePage::DealPokerButton, Interaction::Pressed) => {
                 let simulated_key_event = KeyboardInput {
                     key_code: KeyCode::KeyN,
@@ -122,9 +138,12 @@ fn set_button_color(
     });
 }
 
-pub fn deal_poker(mut poker_query: Query<(&PokerCard, &PokerCardStatus)>, mut deck_query: Query<&mut Text, With<DeckArea>>) {
-    for (card, status) in poker_query.iter_mut() {
-        println!("{:?} {:?} ", card, status);
+pub fn deal_poker(
+    mut poker_query: Query<(&PokerCard, &PokerCardStatus, &PokerCardOrder)>,
+    mut deck_query: Query<&mut Text, With<DeckArea>>,
+) {
+    for (card, status, order) in poker_query.iter_mut() {
+        println!("{:?} {:?} {}", card, status, order.0);
         for deck_text in deck_query.iter_mut() {
             // println!("{:?}", deck_text.sections[0].value);
         }
