@@ -1,5 +1,7 @@
 use bevy::prelude::*;
 
+use crate::components::prelude::PokerCard;
+
 pub mod prelude {
     pub use super::*;
 }
@@ -29,6 +31,18 @@ pub enum MatchPokerSuitCount {
 #[derive(Resource, Deref, DerefMut)]
 pub struct SplashTimer {
     pub timer: Timer,
+}
+
+#[derive(Resource)]
+pub struct DeckTable {
+    pub on_table: Vec<PokerCard>,
+    pub off_table: Vec<PokerCard>,
+}
+
+impl Default for DeckTable{
+    fn default() -> Self {
+        Self { on_table: Default::default(), off_table: Default::default() }
+    }
 }
 
 pub struct HanTextStyle(pub TextStyle);

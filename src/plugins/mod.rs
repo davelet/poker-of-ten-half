@@ -20,6 +20,6 @@ pub fn menu_plugin(app: &mut App) {
 
 pub fn game_plugin(app: &mut App) {
     app.add_systems(OnEnter(GameState::Game), game_setup)
-        .add_systems(Update, (game_update, game_key_input_system).run_if(in_state(GameState::Game)))
+        .add_systems(Update, (game_button_action, game_key_input, game_playing).run_if(in_state(GameState::Game)))
         .add_systems(OnExit(GameState::Game), despawn_screen::<OnGameScreen>);
 }

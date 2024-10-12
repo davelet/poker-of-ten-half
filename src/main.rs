@@ -17,6 +17,7 @@ fn main() {
         .add_plugins((splash_plugin, menu_plugin, game_plugin))
         .insert_resource(MatchPlayerCount::One)
         .insert_resource(MatchPokerSuitCount::One)
+        .insert_resource(DeckTable::default())
         .init_state::<GameState>()
         .add_systems(Startup, setup)
         .run();

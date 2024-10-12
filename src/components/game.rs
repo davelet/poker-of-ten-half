@@ -12,18 +12,18 @@ pub enum ButtonOnGamePage {
 }
 /// 牌数，A 2,3,4,5,6,7,8,9, 10，J Q K
 #[derive(Component, Debug)]
-pub struct CardRank {
+struct CardRank {
     pub rank: i8,
 }
 
 // 卡牌点数
 #[derive(Component, Debug)]
-pub struct CardPoint {
+struct CardPoint {
     pub point_type: PokerReducedPoint,
 }
 
 #[derive(Component, Debug)]
-pub struct CardType {
+struct CardType {
     pub suite: PokerSuiteEnum,
 }
 
@@ -46,6 +46,45 @@ pub enum PokerReducedPoint {
     HalfPoint, // 1/2
 }
 
+#[derive(Component, Debug)]
+
+pub struct PokerCard {
+    pub rank: CardRank,
+    pub point: CardPoint,
+    pub suite: CardType,
+}
+
+impl PokerCard {
+    pub fn new(rank: i8, suite: PokerSuiteEnum) -> Self {
+        PokerCard {
+            rank: CardRank { rank },
+            suite: CardType { suite },
+            point: CardPoint {
+                point_type: match rank {
+                    1..=10 => PokerReducedPoint::NaturalPoint(rank as u8),
+                    _ => PokerReducedPoint::HalfPoint,
+                },
+            },
+        }
+    }
+
+    pub fn joker(big: bool) -> Self {
+        Self {
+            rank: CardRank { rank: if big { -1 } else { -2 } },
+            suite: CardType { suite: PokerSuiteEnum::Joker },
+            point: CardPoint { point_type: PokerReducedPoint::HalfPoint },
+        }
+    }
+}
+
+#[derive(Component, Debug)]
+pub enum PokerCardStatus {
+    OnDeck,  // 初始化尚未洗牌
+    OnTable, // 牌在牌堆上
+    OnHand,  // 牌在手牌上
+    Used,    // 牌被使用
+}
+
 impl std::fmt::Display for PokerReducedPoint {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -62,5 +101,5 @@ pub struct MatchCoin;
 #[derive(Component)]
 pub enum DeckArea {
     AVAIL,
-    USED
+    USED,
 }

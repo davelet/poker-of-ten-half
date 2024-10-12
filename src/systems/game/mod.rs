@@ -28,10 +28,8 @@ pub fn game_setup(mut commands: Commands, _asset_server: Res<AssetServer>) {
         });
 }
 
-pub fn game_update(
+pub fn game_button_action(
     mut interaction_query: Query<(&Interaction, &mut BackgroundColor, &ButtonOnGamePage), (Changed<Interaction>, With<Button>)>,
-    mut poker_query: Query<(&CardRank, &CardType, &CardPoint)>,
-    mut deck_query: Query<&mut Text, With<DeckArea>>,
     mut app_exit_events: EventWriter<AppExit>,
     mut game_state: ResMut<NextState<GameState>>,
 ) {
@@ -58,15 +56,9 @@ pub fn game_update(
             _ => {},
         }
     }
-    for (rank, card_type, point) in poker_query.iter_mut() {
-        println!("{:?} {:?} {:?}", rank, card_type, point);
-        for deck_text in deck_query.iter_mut() {
-            println!("{:?}", deck_text.sections[0].value);
-        }
-    }
 }
 
-pub fn game_key_input_system(
+pub fn game_key_input(
     keyboard_input: Res<ButtonInput<KeyCode>>,
     mut button_query: Query<(&mut BackgroundColor, &ButtonOnGamePage), With<Button>>,
     mut app_exit_events: EventWriter<AppExit>,
@@ -87,5 +79,17 @@ pub fn game_key_input_system(
 
     if keyboard_input.just_pressed(KeyCode::KeyQ) {
         app_exit_events.send(AppExit::Success);
+    }
+}
+
+pub fn game_playing(
+    mut poker_query: Query<(&PokerCard, &PokerCardStatus)>,
+    mut deck_query: Query<&mut Text, With<DeckArea>>,
+) {
+    for (card, status) in poker_query.iter_mut() {
+        println!("{:?} {:?} ", card, status);
+        for deck_text in deck_query.iter_mut() {
+            // println!("{:?}", deck_text.sections[0].value);
+        }
     }
 }
