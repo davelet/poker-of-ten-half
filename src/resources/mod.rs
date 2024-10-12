@@ -7,11 +7,19 @@ pub mod prelude {
 }
 
 #[derive(Clone, Copy, Default, Eq, PartialEq, Debug, Hash, States)]
-pub enum GameState {
+pub enum AppState {
     #[default]
     Splash,
     Menu,
     Game,
+}
+
+#[derive(Clone, Copy, Default, Eq, PartialEq, Debug, Hash, States)]
+pub enum GameState {
+    #[default]
+    Idle, // 等待发牌
+    Deal,  // 发牌
+    Ended, // 游戏结束
 }
 
 #[derive(Resource)]
@@ -39,7 +47,7 @@ pub struct DeckTable {
     pub off_table: Vec<PokerCard>,
 }
 
-impl Default for DeckTable{
+impl Default for DeckTable {
     fn default() -> Self {
         Self { on_table: Default::default(), off_table: Default::default() }
     }

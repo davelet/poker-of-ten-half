@@ -39,8 +39,8 @@ pub fn splash_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.insert_resource(SplashTimer { timer: Timer::from_seconds(1.0, TimerMode::Once) });
 }
 
-pub fn countdown(mut game_state: ResMut<NextState<GameState>>, time: Res<Time>, mut timer: ResMut<SplashTimer>) {
+pub fn countdown(mut game_state: ResMut<NextState<AppState>>, time: Res<Time>, mut timer: ResMut<SplashTimer>) {
     if timer.tick(time.delta()).finished() {
-        game_state.set(GameState::Menu);
+        game_state.set(AppState::Menu);
     }
 }

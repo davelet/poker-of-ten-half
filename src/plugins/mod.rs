@@ -7,19 +7,21 @@ pub mod prelude {
 }
 
 pub fn splash_plugin(app: &mut App) {
-    app.add_systems(OnEnter(GameState::Splash), splash_setup)
-        .add_systems(Update, countdown.run_if(in_state(GameState::Splash)))
-        .add_systems(OnExit(GameState::Splash), despawn_screen::<OnSplashScreen>);
+    app.add_systems(OnEnter(AppState::Splash), splash_setup)
+        .add_systems(Update, countdown.run_if(in_state(AppState::Splash)))
+        .add_systems(OnExit(AppState::Splash), despawn_screen::<OnSplashScreen>);
 }
 
 pub fn menu_plugin(app: &mut App) {
-    app.add_systems(OnEnter(GameState::Menu), show_menu)
-        .add_systems(Update, (menu_action, menu_key_input_system).run_if(in_state(GameState::Menu)))
-        .add_systems(OnExit(GameState::Menu), despawn_screen::<OnMenuScreen>);
+    app.add_systems(OnEnter(AppState::Menu), show_menu)
+        .add_systems(Update, (menu_action, menu_key_input_system).run_if(in_state(AppState::Menu)))
+        .add_systems(OnExit(AppState::Menu), despawn_screen::<OnMenuScreen>);
 }
 
 pub fn game_plugin(app: &mut App) {
-    app.add_systems(OnEnter(GameState::Game), game_setup)
-        .add_systems(Update, (game_button_action, game_key_input, game_playing).run_if(in_state(GameState::Game)))
-        .add_systems(OnExit(GameState::Game), despawn_screen::<OnGameScreen>);
+    app.init_state::<GameState>()
+        .add_systems(OnEnter(AppState::Game), game_setup)
+        .add_systems(Update, (game_button_action, game_key_input).run_if(in_state(AppState::Game)))
+        .add_systems(OnEnter(GameState::Deal), deal_poker)
+        .add_systems(OnExit(AppState::Game), despawn_screen::<OnGameScreen>);
 }

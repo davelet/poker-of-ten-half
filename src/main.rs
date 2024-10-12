@@ -1,4 +1,4 @@
-// #![allow(dead_code)]
+#![allow(dead_code)]
 
 use bevy::prelude::*;
 use plugins::prelude::*;
@@ -18,7 +18,7 @@ fn main() {
         .insert_resource(MatchPlayerCount::One)
         .insert_resource(MatchPokerSuitCount::One)
         .insert_resource(DeckTable::default())
-        .init_state::<GameState>()
+        .init_state::<AppState>()
         .add_systems(Startup, setup)
         .run();
 }

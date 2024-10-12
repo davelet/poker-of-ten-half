@@ -1,6 +1,6 @@
 use bevy::{color::palettes::css::*, prelude::*};
 
-use crate::{components::prelude::*, constants::*, GameState, HanTextStyle, IconLoader};
+use crate::{components::prelude::*, constants::*, AppState, HanTextStyle, IconLoader};
 
 pub fn show_menu(mut commands: Commands) {
     commands
@@ -132,12 +132,12 @@ fn place_title(parent: &mut ChildBuilder) {
 pub fn menu_action(
     mut interaction_query: Query<(&Interaction, &mut BackgroundColor, &ButtonOnMenuPage), (Changed<Interaction>, With<Button>)>,
     mut app_exit_events: EventWriter<AppExit>,
-    mut game_state: ResMut<NextState<GameState>>,
+    mut game_state: ResMut<NextState<AppState>>,
 ) {
     for (interaction, mut color, btn_tag) in &mut interaction_query {
         match (btn_tag, *interaction) {
             (ButtonOnMenuPage::StartGameButton, Interaction::Pressed) => {
-                game_state.set(GameState::Game);
+                game_state.set(AppState::Game);
             },
             (ButtonOnMenuPage::StartGameButton, Interaction::Hovered) => {
                 *color = START_BUTTON_HOVER_COLOR.into();
@@ -159,7 +159,7 @@ pub fn menu_key_input_system(
     keyboard_input: Res<ButtonInput<KeyCode>>,
     mut button_query: Query<(&mut BackgroundColor, &ButtonOnMenuPage), With<Button>>,
     mut app_exit_events: EventWriter<AppExit>,
-    mut game_state: ResMut<NextState<GameState>>,
+    mut game_state: ResMut<NextState<AppState>>,
 ) {
     if keyboard_input.just_pressed(KeyCode::KeyC) {
         for (mut color, btn) in button_query.iter_mut() {
@@ -170,7 +170,7 @@ pub fn menu_key_input_system(
         }
     }
     if keyboard_input.just_released(KeyCode::KeyC) {
-        game_state.set(GameState::Game);
+        game_state.set(AppState::Game);
     }
 
     if keyboard_input.just_pressed(KeyCode::KeyQ) {

@@ -3,7 +3,7 @@ use bevy::prelude::*;
 #[derive(Component)]
 pub struct OnGameScreen;
 
-#[derive(Component)]
+#[derive(Component, PartialEq, Eq)]
 pub enum ButtonOnGamePage {
     BackMenuButton,
     ExitGameButton,
