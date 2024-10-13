@@ -11,18 +11,18 @@ pub enum ButtonOnGamePage {
     DealPokerButton,
 }
 /// 牌数，A 2,3,4,5,6,7,8,9, 10，J Q K
-#[derive(Component, Debug)]
+#[derive(Component, Debug, Clone, Copy)]
 struct CardRank {
     pub rank: i8,
 }
 
 // 卡牌点数
-#[derive(Component, Debug)]
+#[derive(Component, Debug, Clone, Copy)]
 struct CardPoint {
     pub point_type: PokerReducedPoint,
 }
 
-#[derive(Component, Debug)]
+#[derive(Component, Debug, Clone, Copy)]
 struct CardType {
     pub suite: PokerSuiteEnum,
 }
@@ -46,7 +46,7 @@ pub enum PokerReducedPoint {
     HalfPoint, // 1/2
 }
 
-#[derive(Component, Debug)]
+#[derive(Component, Debug, Clone)]
 
 pub struct PokerCard {
     pub rank: CardRank,
@@ -85,14 +85,14 @@ pub enum PokerCardStatus {
     Used,    // 牌被使用
 }
 
-#[derive(Component)]
-pub struct PokerCardOrder(pub u32);
+// #[derive(Component)]
+// pub struct PokerCardOrder(pub u32);
 
-impl Default for PokerCardOrder {
-    fn default() -> Self {
-        Self(0)
-    }
-}
+// impl Default for PokerCardOrder {
+//     fn default() -> Self {
+//         Self(0)
+//     }
+// }
 
 impl std::fmt::Display for PokerReducedPoint {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {

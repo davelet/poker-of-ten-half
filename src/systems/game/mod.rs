@@ -6,21 +6,22 @@ use bevy::{
     },
     prelude::*,
 };
-use bevy_rand::prelude::*;
-use rand_core::RngCore;
+use rand::seq::SliceRandom;
 use setup::prelude::*;
 
 use crate::{components::prelude::*, resources::prelude::*};
 
 mod setup;
 
-pub fn shuffle_cards(mut commands: Commands, poker_query: Query<Entity, With<PokerCard>>, mut rng: ResMut<GlobalEntropy<WyRand>>) {
-    for card in poker_query.iter() {
-        let index = rng.next_u32();
-        commands.entity(card).insert(PokerCardOrder(index));
+pub fn shuffle_cards(mut commands: Commands, poker_query: Query<(Entity, &PokerCard)>, ) {
+    let mut shuffled_cards: Vec<PokerCard> = poker_query.iter().map(|p| (*p.1).clone()).collect();
+    println!("shuffle_cards: {shuffled_cards:?}");
+    let mut rng = rand::thread_rng();
+    shuffled_cards.shuffle(&mut rng);
+    println!("AFTER shuffle_cards: {shuffled_cards:?}");
+    for (entity, _) in poker_query.iter() {
+        commands.entity(entity).despawn();
     }
-
-    // todo 把乱的牌放上去
 }
 
 pub fn game_setup(mut commands: Commands) {
@@ -139,11 +140,11 @@ fn set_button_color(
 }
 
 pub fn deal_poker(
-    mut poker_query: Query<(&PokerCard, &PokerCardStatus, &PokerCardOrder)>,
+    mut poker_query: Query<(&PokerCard, &PokerCardStatus)>,
     mut deck_query: Query<&mut Text, With<DeckArea>>,
 ) {
-    for (card, status, order) in poker_query.iter_mut() {
-        println!("{:?} {:?} {}", card, status, order.0);
+    for (card, status) in poker_query.iter_mut() {
+        println!("{:?} {:?} ", card, status);
         for deck_text in deck_query.iter_mut() {
             // println!("{:?}", deck_text.sections[0].value);
         }
