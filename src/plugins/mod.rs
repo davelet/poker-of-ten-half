@@ -20,7 +20,7 @@ pub fn menu_plugin(app: &mut App) {
 
 pub fn game_plugin(app: &mut App) {
     app.init_state::<GameState>()
-        .add_systems(OnEnter(AppState::Game), (shuffle_cards, game_setup).chain())
+        .add_systems(OnEnter(AppState::Game), (shuffle_cards, game_setup, update_stage).chain())
         .add_systems(Update, (game_button_action, game_key_input).run_if(in_state(AppState::Game)))
         .add_systems(OnEnter(GameState::Deal), deal_poker)
         .add_systems(OnExit(AppState::Game), despawn_screen::<OnGameScreen>);

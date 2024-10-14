@@ -85,7 +85,7 @@ fn setup_deck_stage(parent: &mut ChildBuilder) {
             parent
                 .spawn(NodeBundle {
                     style: Style {
-                        width: Val::Percent(60.0),
+                        width: Val::Percent(90.0),
                         height: Val::Percent(40.0),
                         align_items: AlignItems::Center,
                         justify_content: JustifyContent::Center,
@@ -99,7 +99,7 @@ fn setup_deck_stage(parent: &mut ChildBuilder) {
                     parent
                         .spawn(TextBundle::from_section(
                             "牌堆",
-                            HanTextStyle::default().with_color(bevy::prelude::Color::Srgba(BLACK)).with_font_size(80.0).get_style(),
+                            HanTextStyle::default().with_color(bevy::prelude::Color::Srgba(BLACK)).with_font_size(60.0).get_style(),
                         ))
                         .insert(DeckArea::AVAIL);
                 });
@@ -120,7 +120,7 @@ fn setup_deck_stage(parent: &mut ChildBuilder) {
                     parent
                         .spawn(TextBundle::from_section(
                             "已弃牌",
-                            HanTextStyle::default().with_color(bevy::prelude::Color::Srgba(BLACK)).with_font_size(40.0).get_style(),
+                            HanTextStyle::default().with_color(bevy::prelude::Color::Srgba(BLACK)).with_font_size(30.0).get_style(),
                         ))
                         .insert(DeckArea::USED);
                 });

@@ -13,14 +13,15 @@ use crate::{components::prelude::*, resources::prelude::*};
 
 mod setup;
 
-pub fn shuffle_cards(mut commands: Commands, poker_query: Query<(Entity, &PokerCard)>, ) {
+pub fn shuffle_cards(mut commands: Commands, poker_query: Query<(Entity, &PokerCard)>) {
     let mut shuffled_cards: Vec<PokerCard> = poker_query.iter().map(|p| (*p.1).clone()).collect();
-    println!("shuffle_cards: {shuffled_cards:?}");
     let mut rng = rand::thread_rng();
     shuffled_cards.shuffle(&mut rng);
-    println!("AFTER shuffle_cards: {shuffled_cards:?}");
     for (entity, _) in poker_query.iter() {
         commands.entity(entity).despawn();
+    }
+    for c in shuffled_cards {
+        commands.spawn((c, PokerCardStatus::OnTable));
     }
 }
 
@@ -44,6 +45,30 @@ pub fn game_setup(mut commands: Commands) {
 
             place_stage(parent);
         });
+}
+
+pub fn update_stage (poker_query: Query<(&PokerCard, &PokerCardStatus)>, mut deck_query: Query<&mut Text, With<DeckArea>>) {
+    let mut avail_cards = vec![];
+    let mut used_cards = vec![];
+    
+    for (c, s) in poker_query.iter() {
+        match *s {
+            PokerCardStatus::OnTable => avail_cards.push(c),
+            PokerCardStatus::OnHand => used_cards.push(c),
+            _ => {},
+        }
+    }
+    println!("avail: {:?} used: {:?}", avail_cards.len(), used_cards.len());
+    for (idx, mut deck_text) in deck_query.iter_mut().enumerate() {
+        let text = &deck_text.sections[0].value;
+        let mut new_text = None;
+        if idx == 0 {
+            new_text = Some(format!("{} {}", text, avail_cards.len()));
+        } else {
+            new_text = Some(format!("{} {}", text, used_cards.len()));
+        }
+        deck_text.sections[0].value = new_text.unwrap();
+    }
 }
 
 pub fn game_button_action(
@@ -139,10 +164,7 @@ fn set_button_color(
     });
 }
 
-pub fn deal_poker(
-    mut poker_query: Query<(&PokerCard, &PokerCardStatus)>,
-    mut deck_query: Query<&mut Text, With<DeckArea>>,
-) {
+pub fn deal_poker(mut poker_query: Query<(&PokerCard, &PokerCardStatus)>, mut deck_query: Query<&mut Text, With<DeckArea>>) {
     for (card, status) in poker_query.iter_mut() {
         println!("{:?} {:?} ", card, status);
         for deck_text in deck_query.iter_mut() {
