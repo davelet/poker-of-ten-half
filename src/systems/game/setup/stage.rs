@@ -208,25 +208,31 @@ fn spawn_game_button(
 }
 
 fn spawn_cards(parent: &mut ChildBuilder) {
-    parent.spawn(NodeBundle { style: Style { ..default() }, background_color: WHITE.into(), ..default() }).with_children(|parent| {
-        for _ in 1..=5 {
-            let style = HanTextStyle::default().with_color(bevy::prelude::Color::Srgba(BLACK)).with_font_size(30.0).get_style();
-            parent
-                .spawn(NodeBundle {
-                    style: Style {
-                        width: Val::Percent(20.0),
-                        //    height: Val::Percent(30.0),
-                        margin: UiRect::all(Val::Px(10.0)),
-                        flex_direction: FlexDirection::Column,
+    parent
+        .spawn(NodeBundle {
+            style: Style { width: Val::Percent(80.0), height: Val::Percent(50.0), ..default() },
+            background_color: WHITE.into(),
+            ..default()
+        })
+        .with_children(|parent| {
+            for _ in 1..=5 {
+                let style = HanTextStyle::default().with_color(bevy::prelude::Color::Srgba(BLACK)).with_font_size(26.0).get_style();
+                parent
+                    .spawn(NodeBundle {
+                        style: Style {
+                            width: Val::Percent(20.0),
+                            margin: UiRect::all(Val::Percent(4.0)),
+                            flex_direction: FlexDirection::Column,
+                            ..default()
+                        },
+                        border_color: BLACK.into(),
+                        background_color: DARK_OLIVEGREEN.into(),
                         ..default()
-                    },
-                    border_color: BLACK.into(),
-                    ..default()
-                })
-                .with_children(|parent| {
-                    parent.spawn(TextBundle::from_section("方片", style.clone()));
-                    parent.spawn(TextBundle::from_section("3", style.clone()));
-                });
-        }
-    });
+                    })
+                    .with_children(|parent| {
+                        parent.spawn(TextBundle::from_section("方片", style.clone()));
+                        parent.spawn(TextBundle::from_section("3", style.clone()));
+                    });
+            }
+        });
 }
