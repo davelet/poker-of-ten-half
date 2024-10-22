@@ -85,15 +85,6 @@ pub enum PokerCardStatus {
     Used,    // 牌被使用
 }
 
-// #[derive(Component)]
-// pub struct PokerCardOrder(pub u32);
-
-// impl Default for PokerCardOrder {
-//     fn default() -> Self {
-//         Self(0)
-//     }
-// }
-
 impl std::fmt::Display for PokerReducedPoint {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -112,3 +103,12 @@ pub enum DeckArea {
     AVAIL,
     USED,
 }
+
+#[derive(Component)]
+pub enum SinglePokerArea {
+    Rank, // 数字
+    Type, // 花色
+}
+
+#[derive(Component)]
+pub struct PlayerPointShown;

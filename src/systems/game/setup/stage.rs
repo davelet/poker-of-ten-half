@@ -208,6 +208,7 @@ fn spawn_game_button(
 }
 
 fn spawn_cards(parent: &mut ChildBuilder) {
+    let style = HanTextStyle::default().with_color(bevy::prelude::Color::Srgba(BLACK)).with_font_size(26.0).get_style();
     parent
         .spawn(NodeBundle {
             style: Style { width: Val::Percent(80.0), height: Val::Percent(50.0), ..default() },
@@ -216,7 +217,6 @@ fn spawn_cards(parent: &mut ChildBuilder) {
         })
         .with_children(|parent| {
             for _ in 1..=5 {
-                let style = HanTextStyle::default().with_color(bevy::prelude::Color::Srgba(BLACK)).with_font_size(26.0).get_style();
                 parent
                     .spawn(NodeBundle {
                         style: Style {
@@ -230,9 +230,32 @@ fn spawn_cards(parent: &mut ChildBuilder) {
                         ..default()
                     })
                     .with_children(|parent| {
-                        parent.spawn(TextBundle::from_section("方片", style.clone()));
-                        parent.spawn(TextBundle::from_section("3", style.clone()));
+                        parent.spawn((TextBundle::from_section(POKER_EMPTY_SLOT_TEXT, style.clone()), SinglePokerArea::Type));
+                        parent.spawn((TextBundle::from_section(BLANK_STRING, style.clone()), SinglePokerArea::Rank));
                     });
             }
+        });
+    parent
+        .spawn(NodeBundle {
+            style: Style { width: Val::Percent(80.0), height: Val::Percent(30.0), align_items: AlignItems::Center, ..default() },
+            background_color: LIGHT_CYAN.into(),
+            ..default()
+        })
+        .with_children(|parent| {
+            parent
+                .spawn(NodeBundle {
+                    style: Style {
+                        width: Val::Percent(60.0),
+                        // margin: UiRect::all(Val::Percent(20.0)),
+                        // flex_direction: FlexDirection::Column,
+                        ..default()
+                    },
+                    ..default()
+                })
+                .with_children(|parent| {
+                    let style = TextStyle { font_size: 30.0, ..style };
+                    parent.spawn(TextBundle::from_section(TOTAL_POINT_TEXT, style.clone()));
+                    parent.spawn((TextBundle::from_section(BLANK_STRING, style.clone()), PlayerPointShown));
+                });
         });
 }

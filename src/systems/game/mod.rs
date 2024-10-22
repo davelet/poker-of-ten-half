@@ -51,10 +51,10 @@ pub fn update_stage (poker_query: Query<(&PokerCard, &PokerCardStatus)>, mut dec
     let mut avail_cards = vec![];
     let mut used_cards = vec![];
     
-    for (c, s) in poker_query.iter() {
-        match *s {
-            PokerCardStatus::OnTable => avail_cards.push(c),
-            PokerCardStatus::OnHand => used_cards.push(c),
+    for (card, status) in poker_query.iter() {
+        match *status {
+            PokerCardStatus::OnTable => avail_cards.push(card),
+            PokerCardStatus::OnHand => used_cards.push(card),
             _ => {},
         }
     }
