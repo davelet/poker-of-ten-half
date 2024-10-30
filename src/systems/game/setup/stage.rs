@@ -98,11 +98,12 @@ fn setup_deck_stage(parent: &mut ChildBuilder) {
                 .with_children(|parent| {
                     parent
                         .spawn(TextBundle::from_section(
-                            "牌堆",
+                            POKER_DECK_AVAILABLE_TEXT,
                             HanTextStyle::default().with_color(bevy::prelude::Color::Srgba(BLACK)).with_font_size(60.0).get_style(),
                         ))
                         .insert(DeckArea::AVAIL);
                 });
+
             parent
                 .spawn(NodeBundle {
                     style: Style {
@@ -119,7 +120,7 @@ fn setup_deck_stage(parent: &mut ChildBuilder) {
                 .with_children(|parent| {
                     parent
                         .spawn(TextBundle::from_section(
-                            "已弃牌",
+                            POKER_USED_TEXT,
                             HanTextStyle::default().with_color(bevy::prelude::Color::Srgba(BLACK)).with_font_size(30.0).get_style(),
                         ))
                         .insert(DeckArea::USED);
@@ -145,7 +146,27 @@ fn place_south_line(parent: &mut ChildBuilder) {
 
             spawn_player(parent, LIGHT_CORAL, FlexDirection::ColumnReverse, false, true);
 
-            spawn_game_button(parent, FlexDirection::Row, style.clone(), DEAL_POKER_BUTTON_TEXT, ButtonOnGamePage::DealPokerButton);
+            parent
+                .spawn(NodeBundle {
+                    style: Style {
+                        width: Val::Percent(30.0),
+                        height: Val::Percent(100.0),
+                        flex_direction: FlexDirection::ColumnReverse,
+                        margin: UiRect::all(Val::Px(10.0)),
+                        ..default()
+                    },
+                    ..default()
+                })
+                .with_children(|parent| {
+                    spawn_game_button(parent, FlexDirection::Row, style.clone(), DEAL_POKER_BUTTON_TEXT, ButtonOnGamePage::DealPokerButton);
+                    spawn_game_button(
+                        parent,
+                        FlexDirection::Row,
+                        style.clone(),
+                        STOP_DEALING_BUTTON_TEXT,
+                        ButtonOnGamePage::StopDealingButton,
+                    );
+                });
         });
 }
 
@@ -186,7 +207,6 @@ fn spawn_game_button(
         .spawn(NodeBundle {
             style: Style {
                 width: Val::Percent(30.0),
-                height: Val::Percent(100.0),
                 flex_direction,
                 margin: UiRect::all(Val::Px(10.0)),
                 ..default()
@@ -244,11 +264,7 @@ fn spawn_cards(parent: &mut ChildBuilder) {
         .with_children(|parent| {
             parent
                 .spawn(NodeBundle {
-                    style: Style {
-                        width: Val::Percent(60.0),
-                        margin: UiRect::all(Val::Percent(25.0)),
-                        ..default()
-                    },
+                    style: Style { width: Val::Percent(60.0), margin: UiRect::horizontal(Val::Percent(25.0)), ..default() },
                     ..default()
                 })
                 .with_children(|parent| {

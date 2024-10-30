@@ -1,5 +1,7 @@
 use bevy::prelude::*;
 
+use crate::GameState;
+
 #[derive(Component)]
 pub struct OnGameScreen;
 
@@ -9,6 +11,7 @@ pub enum ButtonOnGamePage {
     ExitGameButton,
     RenewGameButton,
     DealPokerButton,
+    StopDealingButton,
 }
 /// 牌数，A 2,3,4,5,6,7,8,9, 10，J Q K
 #[derive(Component, Debug, Clone, Copy)]
@@ -112,3 +115,7 @@ pub enum SinglePokerArea {
 
 #[derive(Component)]
 pub struct PlayerPointShown;
+
+// 记录需要跳过的玩家，直接进入其他玩家轮次
+#[derive(Component)]
+pub struct SkipTurn(pub GameState);

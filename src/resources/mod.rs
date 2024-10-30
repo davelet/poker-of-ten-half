@@ -17,9 +17,13 @@ pub enum AppState {
 #[derive(Clone, Copy, Default, Eq, PartialEq, Debug, Hash, States)]
 pub enum GameState {
     #[default]
-    Idle, // 等待发牌
-    Deal,  // 发牌
-    Ended, // 游戏结束
+    // Idle, // 等待发牌
+    // Deal,      // 发牌
+    SouthTurn, // 自己的轮次
+    EastTurn,  // 右手边轮次
+    NorthTurn, // 对面的轮次
+    WestTurn,  // 左手边轮次
+    Ended,     // 游戏结束
 }
 
 #[derive(Resource)]

@@ -47,10 +47,10 @@ pub fn game_setup(mut commands: Commands) {
         });
 }
 
-pub fn update_stage (poker_query: Query<(&PokerCard, &PokerCardStatus)>, mut deck_query: Query<&mut Text, With<DeckArea>>) {
+pub fn update_stage(poker_query: Query<(&PokerCard, &PokerCardStatus)>, mut deck_query: Query<&mut Text, With<DeckArea>>) {
     let mut avail_cards = vec![];
     let mut used_cards = vec![];
-    
+
     for (card, status) in poker_query.iter() {
         match *status {
             PokerCardStatus::OnTable => avail_cards.push(card),
@@ -58,16 +58,15 @@ pub fn update_stage (poker_query: Query<(&PokerCard, &PokerCardStatus)>, mut dec
             _ => {},
         }
     }
-    println!("avail: {:?} used: {:?}", avail_cards.len(), used_cards.len());
     for (idx, mut deck_text) in deck_query.iter_mut().enumerate() {
         let text = &deck_text.sections[0].value;
-        let mut new_text = None;
+        let new_text: String;
         if idx == 0 {
-            new_text = Some(format!("{} {}", text, avail_cards.len()));
+            new_text = format!("{} {}", text, avail_cards.len());
         } else {
-            new_text = Some(format!("{} {}", text, used_cards.len()));
+            new_text = format!("{} {}", text, used_cards.len());
         }
-        deck_text.sections[0].value = new_text.unwrap();
+        deck_text.sections[0].value = new_text;
     }
 }
 
@@ -128,12 +127,22 @@ pub fn game_button_action(
                 };
                 keyboard_input_writer.send(simulated_key_event);
             },
+            (ButtonOnGamePage::StopDealingButton, Interaction::Pressed) => {
+                let simulated_key_event = KeyboardInput {
+                    key_code: KeyCode::KeyJ,
+                    logical_key: Key::Character("J".into()),
+                    state: ButtonState::Pressed,
+                    window: game_screen_entity.unwrap(),
+                };
+                keyboard_input_writer.send(simulated_key_event);
+            },
             _ => {},
         }
     }
 }
 
 pub fn game_key_input(
+    mut commands: Commands,
     keyboard_input: Res<ButtonInput<KeyCode>>,
     button_query: Query<(&mut BackgroundColor, &ButtonOnGamePage), With<Button>>,
     mut app_exit_events: EventWriter<AppExit>,
@@ -148,9 +157,12 @@ pub fn game_key_input(
         app_exit_events.send(AppExit::Success);
     } else if keyboard_input.just_pressed(KeyCode::KeyN) {
         set_button_color(ButtonOnGamePage::DealPokerButton, LIGHT_SEA_GREEN.into(), button_query);
-        game_state.set(GameState::Deal);
+        game_state.set(GameState::EastTurn);
     } else if keyboard_input.just_released(KeyCode::KeyN) {
         set_button_color(ButtonOnGamePage::DealPokerButton, Color::NONE.into(), button_query);
+    } else if keyboard_input.just_pressed(KeyCode::KeyJ) {
+        commands.spawn(SkipTurn(GameState::SouthTurn));
+        game_state.set(GameState::EastTurn);
     }
 }
 
@@ -164,11 +176,72 @@ fn set_button_color(
         true
     });
 }
-pub fn deal_poker(mut poker_query: Query<(&PokerCard, &PokerCardStatus)>, mut deck_query: Query<&mut Text, With<DeckArea>>) {
-    for (card, status) in poker_query.iter_mut() {
-        println!("{:?} {:?} ", card, status);
+pub fn deal_south(
+    mut poker_query: Query<(&PokerCard, &PokerCardStatus)>,
+    mut deck_query: Query<&mut Text, With<DeckArea>>,
+    mut game_state: ResMut<NextState<GameState>>,
+    skip_turn_query: Query<&SkipTurn>,
+) {
+    for (card, status) in poker_query.iter() {
+        // println!("{:?} {:?} ", card, status);
         for deck_text in deck_query.iter_mut() {
             // println!("{:?}", deck_text.sections[0].value);
         }
     }
+    if skip_turn_query.iter().any(|t| t.0 == GameState::SouthTurn) {
+        println!("skip south turn");
+        game_state.set(GameState::EastTurn);
+    } 
+    // else {
+    //     println!("dealed south done poker");
+    //     
+    // }
+    // println!("dealed south done poker");
+    // game_state.set(GameState::EastTurn);
+}
+
+pub fn deal_east(
+    mut poker_query: Query<(&PokerCard, &PokerCardStatus)>,
+    mut deck_query: Query<&mut Text, With<DeckArea>>,
+    skip_turn_query: Query<&SkipTurn>,
+    mut game_state: ResMut<NextState<GameState>>,
+) {
+    // for (card, status) in poker_query.iter() {
+    //     println!("{:?} {:?} ", card, status);
+    //     for deck_text in deck_query.iter_mut() {
+    //         // println!("{:?}", deck_text.sections[0].value);
+    //     }
+    // }
+    let mut skip = false;
+    for turn in skip_turn_query.iter() {
+        println!("{:?}", turn.0);
+        if turn.0 == GameState::EastTurn {
+            skip = true;
+            break;
+        }
+    }
+    if !skip {
+        // println!("skip east turn");
+    }
+    
+    println!("dealed east done poker");
+    game_state.set(GameState::NorthTurn);
+}
+
+pub fn deal_north(
+    mut poker_query: Query<(&PokerCard, &PokerCardStatus)>,
+    mut deck_query: Query<&mut Text, With<DeckArea>>,
+    mut game_state: ResMut<NextState<GameState>>,
+) {
+    println!("dealed north done poker");
+    game_state.set(GameState::WestTurn);
+}
+
+pub fn deal_west(
+    mut poker_query: Query<(&PokerCard, &PokerCardStatus)>,
+    mut deck_query: Query<&mut Text, With<DeckArea>>,
+    mut game_state: ResMut<NextState<GameState>>,
+) {
+    println!("dealed west done poker");
+    game_state.set(GameState::SouthTurn);
 }
