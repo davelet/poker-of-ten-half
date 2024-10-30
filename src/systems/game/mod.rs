@@ -157,7 +157,7 @@ pub fn game_key_input(
         app_exit_events.send(AppExit::Success);
     } else if keyboard_input.just_pressed(KeyCode::KeyN) {
         set_button_color(ButtonOnGamePage::DealPokerButton, LIGHT_SEA_GREEN.into(), button_query);
-        game_state.set(GameState::EastTurn);
+        game_state.set(GameState::DealingSouth);
     } else if keyboard_input.just_released(KeyCode::KeyN) {
         set_button_color(ButtonOnGamePage::DealPokerButton, Color::NONE.into(), button_query);
     } else if keyboard_input.just_pressed(KeyCode::KeyJ) {
@@ -176,25 +176,41 @@ fn set_button_color(
         true
     });
 }
+
 pub fn deal_south(
+    mut poker_query: Query<(&PokerCard, &mut PokerCardStatus)>,
+    mut deck_query: Query<&mut Text, With<DeckArea>>,
+    mut game_state: ResMut<NextState<GameState>>,
+    skip_turn_query: Query<&SkipTurn>,
+) {
+    for (card, mut status) in poker_query.iter_mut() {
+        if *status != PokerCardStatus::OnTable {
+            continue;
+        }
+
+        *status = PokerCardStatus::OnHand;        
+        for deck_text in deck_query.iter_mut() {
+            // println!("{:?}", deck_text.sections[0].value);
+        }
+        game_state.set(GameState::EastTurn);
+        return;
+    }
+    game_state.set(GameState::Ended);
+}
+
+pub fn waiting_deal_south(
     mut poker_query: Query<(&PokerCard, &PokerCardStatus)>,
     mut deck_query: Query<&mut Text, With<DeckArea>>,
     mut game_state: ResMut<NextState<GameState>>,
     skip_turn_query: Query<&SkipTurn>,
 ) {
-    for (card, status) in poker_query.iter() {
-        // println!("{:?} {:?} ", card, status);
-        for deck_text in deck_query.iter_mut() {
-            // println!("{:?}", deck_text.sections[0].value);
-        }
-    }
     if skip_turn_query.iter().any(|t| t.0 == GameState::SouthTurn) {
         println!("skip south turn");
         game_state.set(GameState::EastTurn);
-    } 
+    }
     // else {
     //     println!("dealed south done poker");
-    //     
+    //
     // }
     // println!("dealed south done poker");
     // game_state.set(GameState::EastTurn);
@@ -223,7 +239,7 @@ pub fn deal_east(
     if !skip {
         // println!("skip east turn");
     }
-    
+
     println!("dealed east done poker");
     game_state.set(GameState::NorthTurn);
 }

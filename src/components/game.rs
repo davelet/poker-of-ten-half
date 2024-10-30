@@ -80,7 +80,7 @@ impl PokerCard {
     }
 }
 
-#[derive(Component, Debug)]
+#[derive(Component, Debug, PartialEq, Eq)]
 pub enum PokerCardStatus {
     OnDeck,  // 初始化尚未洗牌
     OnTable, // 牌在牌堆上
