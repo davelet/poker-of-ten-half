@@ -148,8 +148,9 @@ pub fn game_key_input(
         app_exit_events.send(AppExit::Success);
     } else if keyboard_input.just_pressed(KeyCode::KeyN) {
         set_button_color(ButtonOnGamePage::DealPokerButton, LIGHT_SEA_GREEN.into(), button_query);
-    } else if keyboard_input.just_released(KeyCode::KeyN) {
         game_state.set(GameState::Deal);
+    } else if keyboard_input.just_released(KeyCode::KeyN) {
+        set_button_color(ButtonOnGamePage::DealPokerButton, Color::NONE.into(), button_query);
     }
 }
 
@@ -163,7 +164,6 @@ fn set_button_color(
         true
     });
 }
-
 pub fn deal_poker(mut poker_query: Query<(&PokerCard, &PokerCardStatus)>, mut deck_query: Query<&mut Text, With<DeckArea>>) {
     for (card, status) in poker_query.iter_mut() {
         println!("{:?} {:?} ", card, status);

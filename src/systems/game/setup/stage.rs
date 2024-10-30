@@ -246,8 +246,7 @@ fn spawn_cards(parent: &mut ChildBuilder) {
                 .spawn(NodeBundle {
                     style: Style {
                         width: Val::Percent(60.0),
-                        // margin: UiRect::all(Val::Percent(20.0)),
-                        // flex_direction: FlexDirection::Column,
+                        margin: UiRect::all(Val::Percent(25.0)),
                         ..default()
                     },
                     ..default()
