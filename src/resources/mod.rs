@@ -1,4 +1,4 @@
-use bevy::prelude::*;
+use bevy::{prelude::*, scene::ron::de};
 
 use crate::components::prelude::PokerCard;
 
@@ -26,6 +26,16 @@ pub enum MatchState {
     WestTurn,     // 左手边轮次
     Ended,        // 游戏结束
 }
+
+#[derive(Clone, Copy, Default, Eq, PartialEq, Debug, Hash, States)]
+pub enum DealPokerInMatch {
+    Deal,
+    #[default]
+    End,
+}
+
+#[derive(Component)]
+pub struct DealingPokerRecord;
 
 #[derive(Resource)]
 pub enum MatchPlayerCount {

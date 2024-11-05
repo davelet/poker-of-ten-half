@@ -13,6 +13,7 @@ pub static mut HAN_FONT_OPTION: Option<Handle<Font>> = None;
 pub static mut APP_ICON_IMAGE: Option<Handle<Image>> = None;
 
 pub const TEXT_COLOR: Color = Color::srgb(0.9, 0.9, 0.9);
+pub const PLAYER_PLOT_TEXT: &str = "玩家：";
 pub const BLANK_STRING: &str = "";
 pub const START_BUTTON_TEXT: &str = "来一局(C)";
 pub const EXIT_BUTTON_TEXT: &str = "退出程序(Q)";

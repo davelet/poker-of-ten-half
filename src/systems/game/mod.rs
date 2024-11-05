@@ -179,20 +179,51 @@ fn set_button_color(
     });
 }
 
-fn show_poker_for_player(player: MatchState, card: &PokerCard) {
+fn show_poker_for_player(
+    mut commands: Commands,
+    player: MatchState,
+    card: &PokerCard,
+    mut deal_state: ResMut<NextState<DealPokerInMatch>>,
+) {
     match player {
-        MatchState::SouthTurn => {},
-        MatchState::EastTurn => {},
-        MatchState::NorthTurn => {},
-        MatchState::WestTurn => {},
-        _ => panic!("error input"),
+        MatchState::SouthTurn | MatchState::EastTurn | MatchState::NorthTurn | MatchState::WestTurn => {
+            deal_state.set(DealPokerInMatch::Deal);
+            commands.spawn((card.clone(), DealingPokerRecord));
+        },
+        _ => panic!("error input in `show_poker_for_player`"),
     }
 }
 
+pub fn display_pokers(
+    mut commands: Commands,
+    mut deal_state: ResMut<NextState<DealPokerInMatch>>,
+    game_state: ResMut<State<MatchState>>,
+    mut dealing_query: Query<(Entity, &PokerCard, &DealingPokerRecord)>,
+) {
+    let state = game_state.get();
+    let mut card = None;
+    for (e, p, dr) in dealing_query.iter_mut() {
+        card = Some(p.clone());
+        commands.entity(e).despawn();
+    }
+
+    match *state {
+        MatchState::SouthTurn => {},
+        MatchState::DealingSouth => {},
+        MatchState::EastTurn => {},
+        MatchState::NorthTurn => {},
+        MatchState::WestTurn => {},
+        MatchState::Ended => {},
+    }
+    deal_state.set(DealPokerInMatch::End);
+}
+
 pub fn deal_south(
+    commands: Commands,
     mut poker_query: Query<(&PokerCard, &mut PokerCardStatus)>,
     deck_query: Query<(&mut Text, &DeckArea)>,
     mut game_state: ResMut<NextState<MatchState>>,
+    deal_state: ResMut<NextState<DealPokerInMatch>>,
 ) {
     for (card, mut status) in poker_query.iter_mut() {
         if *status != PokerCardStatus::OnTable {
@@ -201,7 +232,7 @@ pub fn deal_south(
 
         *status = PokerCardStatus::OnHand;
         update_deck_area(deck_query, true, -1);
-        show_poker_for_player(MatchState::SouthTurn, card);
+        show_poker_for_player(commands, MatchState::SouthTurn, card, deal_state);
 
         game_state.set(MatchState::EastTurn);
         return;

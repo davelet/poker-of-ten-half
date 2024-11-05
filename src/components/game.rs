@@ -49,7 +49,7 @@ pub enum PokerReducedPoint {
     HalfPoint, // 1/2
 }
 
-#[derive(Component, Debug, Clone)]
+#[derive(Component, Debug, Clone, Copy)]
 
 pub struct PokerCard {
     pub rank: CardRank,
@@ -114,7 +114,7 @@ pub enum SinglePokerArea {
 }
 
 #[derive(Component)]
-pub struct SinglePokerAreaSlot;
+pub struct SinglePokerAreaSlot(pub MatchState);
 
 #[derive(Component)]
 pub struct PlayerPointShown;

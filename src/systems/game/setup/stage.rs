@@ -188,17 +188,17 @@ fn spawn_player(parent: &mut ChildBuilder, bg_color: Srgba, flex_direction: Flex
         .with_children(|parent| {
             let style = HanTextStyle::default().with_color(bevy::prelude::Color::Srgba(BLACK)).with_font_size(20.0).get_style();
             if has_content {
-                parent.spawn(TextBundle::from_section(format!("Player {}", generate_player_name(turn)), style.clone()));
+                parent.spawn(TextBundle::from_section(format!("{}{}", PLAYER_PLOT_TEXT, generate_player_name(&turn)), style.clone()));
                 parent.spawn(TextBundle::from_section("豆子100", style.clone()));
-                spawn_cards(parent);
+                spawn_cards(parent, &turn);
             } else {
                 parent.spawn(TextBundle::from_section("Nobody", style));
             }
         });
 }
 
-fn generate_player_name(turn: MatchState,) -> String {
-    match turn {
+fn generate_player_name(turn: &MatchState,) -> String {
+    match *turn {
         MatchState::SouthTurn => "南".to_string(),
         MatchState::WestTurn => "西".to_string(),
         MatchState::NorthTurn => "北".to_string(),
@@ -233,7 +233,7 @@ fn spawn_game_button(
         });
 }
 
-fn spawn_cards(parent: &mut ChildBuilder) {
+fn spawn_cards(parent: &mut ChildBuilder, turn: &MatchState) {
     let style = HanTextStyle::default().with_color(bevy::prelude::Color::Srgba(BLACK)).with_font_size(26.0).get_style();
     parent
         .spawn(NodeBundle {
@@ -259,7 +259,7 @@ fn spawn_cards(parent: &mut ChildBuilder) {
                         parent.spawn((TextBundle::from_section(POKER_EMPTY_SLOT_TEXT, style.clone()), SinglePokerArea::Type));
                         parent.spawn((TextBundle::from_section(BLANK_STRING, style.clone()), SinglePokerArea::Rank));
                     })
-                    .insert(SinglePokerAreaSlot {});
+                    .insert(SinglePokerAreaSlot(turn.clone()));
             }
         });
     parent

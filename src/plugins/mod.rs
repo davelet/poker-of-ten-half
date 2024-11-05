@@ -20,6 +20,7 @@ pub fn menu_plugin(app: &mut App) {
 
 pub fn game_plugin(app: &mut App) {
     app.init_state::<MatchState>()
+        .init_state::<DealPokerInMatch>()
         .add_systems(OnEnter(AppState::Game), (shuffle_cards, game_setup, update_stage).chain())
         .add_systems(Update, (game_button_action, game_key_input).run_if(in_state(AppState::Game)))
         .add_systems(OnEnter(MatchState::SouthTurn), waiting_deal_south)
@@ -28,5 +29,6 @@ pub fn game_plugin(app: &mut App) {
         .add_systems(OnEnter(MatchState::NorthTurn), deal_north)
         .add_systems(OnEnter(MatchState::WestTurn), deal_west)
         .add_systems(OnEnter(MatchState::Ended), match_eneded)
+        .add_systems(OnEnter(DealPokerInMatch::Deal), display_pokers)
         .add_systems(OnExit(AppState::Game), despawn_screen::<OnGameScreen>);
 }
