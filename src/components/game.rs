@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::GameState;
+use crate::MatchState;
 
 #[derive(Component)]
 pub struct OnGameScreen;
@@ -101,21 +101,24 @@ impl std::fmt::Display for PokerReducedPoint {
 #[derive(Component)]
 pub struct MatchCoin;
 
-#[derive(Component)]
+#[derive(Component, PartialEq, Eq)]
 pub enum DeckArea {
     AVAIL,
     USED,
 }
 
-#[derive(Component)]
+#[derive(Component, PartialEq, PartialOrd, Clone, Copy)]
 pub enum SinglePokerArea {
     Rank, // 数字
     Type, // 花色
 }
 
 #[derive(Component)]
+pub struct SinglePokerAreaSlot;
+
+#[derive(Component)]
 pub struct PlayerPointShown;
 
 // 记录需要跳过的玩家，直接进入其他玩家轮次
 #[derive(Component)]
-pub struct SkipTurn(pub GameState);
+pub struct SkipTurn(pub MatchState);

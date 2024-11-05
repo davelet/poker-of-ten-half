@@ -19,13 +19,14 @@ pub fn menu_plugin(app: &mut App) {
 }
 
 pub fn game_plugin(app: &mut App) {
-    app.init_state::<GameState>()
+    app.init_state::<MatchState>()
         .add_systems(OnEnter(AppState::Game), (shuffle_cards, game_setup, update_stage).chain())
         .add_systems(Update, (game_button_action, game_key_input).run_if(in_state(AppState::Game)))
-        .add_systems(OnEnter(GameState::SouthTurn), waiting_deal_south)
-        .add_systems(OnEnter(GameState::DealingSouth), deal_south)
-        .add_systems(OnEnter(GameState::EastTurn), deal_east)
-        .add_systems(OnEnter(GameState::NorthTurn), deal_north)
-        .add_systems(OnEnter(GameState::WestTurn), deal_west)
+        .add_systems(OnEnter(MatchState::SouthTurn), waiting_deal_south)
+        .add_systems(OnEnter(MatchState::DealingSouth), deal_south)
+        .add_systems(OnEnter(MatchState::EastTurn), deal_east)
+        .add_systems(OnEnter(MatchState::NorthTurn), deal_north)
+        .add_systems(OnEnter(MatchState::WestTurn), deal_west)
+        .add_systems(OnEnter(MatchState::Ended), match_eneded)
         .add_systems(OnExit(AppState::Game), despawn_screen::<OnGameScreen>);
 }

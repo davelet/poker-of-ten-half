@@ -1,6 +1,6 @@
 use bevy::{color::palettes::css::*, math::bool, prelude::*};
 
-use crate::{components::prelude::*, constants::*, HanTextStyle};
+use crate::{components::prelude::*, constants::*, HanTextStyle, MatchState};
 
 pub fn place_stage(parent: &mut ChildBuilder) {
     parent
@@ -39,7 +39,7 @@ fn place_north_line(parent: &mut ChildBuilder) {
             ..default()
         })
         .with_children(|parent| {
-            spawn_player(parent, MEDIUM_PURPLE, FlexDirection::Column, false, true);
+            spawn_player(parent, MEDIUM_PURPLE, FlexDirection::Column, MatchState::NorthTurn, true);
         });
 }
 // 中间的包括左边、中桌、右边
@@ -58,11 +58,11 @@ fn place_center_line(parent: &mut ChildBuilder) {
             ..default()
         })
         .with_children(|parent| {
-            spawn_player(parent, GREEN_YELLOW, FlexDirection::ColumnReverse, true, false);
+            spawn_player(parent, GREEN_YELLOW, FlexDirection::ColumnReverse, MatchState::WestTurn, false);
 
             setup_deck_stage(parent);
 
-            spawn_player(parent, PINK, FlexDirection::ColumnReverse, true, false);
+            spawn_player(parent, PINK, FlexDirection::ColumnReverse, MatchState::EastTurn, false);
         });
 }
 
@@ -144,7 +144,7 @@ fn place_south_line(parent: &mut ChildBuilder) {
             let style = HanTextStyle::default().with_color(bevy::prelude::Color::Srgba(BLACK)).with_font_size(30.0).get_style();
             spawn_game_button(parent, FlexDirection::RowReverse, style.clone(), RENEW_GAME_BUTTON_TEXT, ButtonOnGamePage::RenewGameButton);
 
-            spawn_player(parent, LIGHT_CORAL, FlexDirection::ColumnReverse, false, true);
+            spawn_player(parent, LIGHT_CORAL, FlexDirection::ColumnReverse, MatchState::SouthTurn, true);
 
             parent
                 .spawn(NodeBundle {
@@ -170,7 +170,8 @@ fn place_south_line(parent: &mut ChildBuilder) {
         });
 }
 
-fn spawn_player(parent: &mut ChildBuilder, bg_color: Srgba, flex_direction: FlexDirection, side_position: bool, has_content: bool) {
+fn spawn_player(parent: &mut ChildBuilder, bg_color: Srgba, flex_direction: FlexDirection, turn: MatchState, has_content: bool) {
+    let side_position = turn == MatchState::EastTurn || turn == MatchState::WestTurn;
     parent
         .spawn(NodeBundle {
             style: Style {
@@ -187,13 +188,23 @@ fn spawn_player(parent: &mut ChildBuilder, bg_color: Srgba, flex_direction: Flex
         .with_children(|parent| {
             let style = HanTextStyle::default().with_color(bevy::prelude::Color::Srgba(BLACK)).with_font_size(20.0).get_style();
             if has_content {
-                parent.spawn(TextBundle::from_section("Player", style.clone()));
+                parent.spawn(TextBundle::from_section(format!("Player {}", generate_player_name(turn)), style.clone()));
                 parent.spawn(TextBundle::from_section("豆子100", style.clone()));
                 spawn_cards(parent);
             } else {
                 parent.spawn(TextBundle::from_section("Nobody", style));
             }
         });
+}
+
+fn generate_player_name(turn: MatchState,) -> String {
+    match turn {
+        MatchState::SouthTurn => "南".to_string(),
+        MatchState::WestTurn => "西".to_string(),
+        MatchState::NorthTurn => "北".to_string(),
+        MatchState::EastTurn => "东".to_string(),
+        _ => panic!("Invalid turn"),
+    }
 }
 
 fn spawn_game_button(
@@ -205,12 +216,7 @@ fn spawn_game_button(
 ) {
     parent
         .spawn(NodeBundle {
-            style: Style {
-                width: Val::Percent(30.0),
-                flex_direction,
-                margin: UiRect::all(Val::Px(10.0)),
-                ..default()
-            },
+            style: Style { width: Val::Percent(30.0), flex_direction, margin: UiRect::all(Val::Px(10.0)), ..default() },
             ..default()
         })
         .with_children(|parent| {
@@ -252,7 +258,8 @@ fn spawn_cards(parent: &mut ChildBuilder) {
                     .with_children(|parent| {
                         parent.spawn((TextBundle::from_section(POKER_EMPTY_SLOT_TEXT, style.clone()), SinglePokerArea::Type));
                         parent.spawn((TextBundle::from_section(BLANK_STRING, style.clone()), SinglePokerArea::Rank));
-                    });
+                    })
+                    .insert(SinglePokerAreaSlot {});
             }
         });
     parent

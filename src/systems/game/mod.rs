@@ -1,3 +1,5 @@
+use core::panic;
+
 use bevy::{
     color::palettes::css::*,
     input::{
@@ -147,7 +149,7 @@ pub fn game_key_input(
     button_query: Query<(&mut BackgroundColor, &ButtonOnGamePage), With<Button>>,
     mut app_exit_events: EventWriter<AppExit>,
     mut app_state: ResMut<NextState<AppState>>,
-    mut game_state: ResMut<NextState<GameState>>,
+    mut game_state: ResMut<NextState<MatchState>>,
 ) {
     if keyboard_input.just_pressed(KeyCode::KeyB) {
         set_button_color(ButtonOnGamePage::BackMenuButton, DARK_BLUE.into(), button_query);
@@ -157,12 +159,12 @@ pub fn game_key_input(
         app_exit_events.send(AppExit::Success);
     } else if keyboard_input.just_pressed(KeyCode::KeyN) {
         set_button_color(ButtonOnGamePage::DealPokerButton, LIGHT_SEA_GREEN.into(), button_query);
-        game_state.set(GameState::DealingSouth);
+        game_state.set(MatchState::DealingSouth);
     } else if keyboard_input.just_released(KeyCode::KeyN) {
         set_button_color(ButtonOnGamePage::DealPokerButton, Color::NONE.into(), button_query);
     } else if keyboard_input.just_pressed(KeyCode::KeyJ) {
-        commands.spawn(SkipTurn(GameState::SouthTurn));
-        game_state.set(GameState::EastTurn);
+        commands.spawn(SkipTurn(MatchState::SouthTurn));
+        game_state.set(MatchState::EastTurn);
     }
 }
 
@@ -177,50 +179,48 @@ fn set_button_color(
     });
 }
 
+fn show_poker_for_player(player: MatchState, card: &PokerCard) {
+    match player {
+        MatchState::SouthTurn => {},
+        MatchState::EastTurn => {},
+        MatchState::NorthTurn => {},
+        MatchState::WestTurn => {},
+        _ => panic!("error input"),
+    }
+}
+
 pub fn deal_south(
     mut poker_query: Query<(&PokerCard, &mut PokerCardStatus)>,
-    mut deck_query: Query<&mut Text, With<DeckArea>>,
-    mut game_state: ResMut<NextState<GameState>>,
-    skip_turn_query: Query<&SkipTurn>,
+    deck_query: Query<(&mut Text, &DeckArea)>,
+    mut game_state: ResMut<NextState<MatchState>>,
 ) {
     for (card, mut status) in poker_query.iter_mut() {
         if *status != PokerCardStatus::OnTable {
             continue;
         }
 
-        *status = PokerCardStatus::OnHand;        
-        for deck_text in deck_query.iter_mut() {
-            // println!("{:?}", deck_text.sections[0].value);
-        }
-        game_state.set(GameState::EastTurn);
+        *status = PokerCardStatus::OnHand;
+        update_deck_area(deck_query, true, -1);
+        show_poker_for_player(MatchState::SouthTurn, card);
+
+        game_state.set(MatchState::EastTurn);
         return;
     }
-    game_state.set(GameState::Ended);
+    game_state.set(MatchState::Ended);
 }
 
-pub fn waiting_deal_south(
-    mut poker_query: Query<(&PokerCard, &PokerCardStatus)>,
-    mut deck_query: Query<&mut Text, With<DeckArea>>,
-    mut game_state: ResMut<NextState<GameState>>,
-    skip_turn_query: Query<&SkipTurn>,
-) {
-    if skip_turn_query.iter().any(|t| t.0 == GameState::SouthTurn) {
+pub fn waiting_deal_south(mut game_state: ResMut<NextState<MatchState>>, skip_turn_query: Query<&SkipTurn>) {
+    if skip_turn_query.iter().any(|t| t.0 == MatchState::SouthTurn) {
         println!("skip south turn");
-        game_state.set(GameState::EastTurn);
+        game_state.set(MatchState::EastTurn);
     }
-    // else {
-    //     println!("dealed south done poker");
-    //
-    // }
-    // println!("dealed south done poker");
-    // game_state.set(GameState::EastTurn);
 }
 
 pub fn deal_east(
     mut poker_query: Query<(&PokerCard, &PokerCardStatus)>,
     mut deck_query: Query<&mut Text, With<DeckArea>>,
     skip_turn_query: Query<&SkipTurn>,
-    mut game_state: ResMut<NextState<GameState>>,
+    mut game_state: ResMut<NextState<MatchState>>,
 ) {
     // for (card, status) in poker_query.iter() {
     //     println!("{:?} {:?} ", card, status);
@@ -231,7 +231,7 @@ pub fn deal_east(
     let mut skip = false;
     for turn in skip_turn_query.iter() {
         println!("{:?}", turn.0);
-        if turn.0 == GameState::EastTurn {
+        if turn.0 == MatchState::EastTurn {
             skip = true;
             break;
         }
@@ -241,23 +241,54 @@ pub fn deal_east(
     }
 
     println!("dealed east done poker");
-    game_state.set(GameState::NorthTurn);
+    game_state.set(MatchState::NorthTurn);
 }
 
 pub fn deal_north(
     mut poker_query: Query<(&PokerCard, &PokerCardStatus)>,
     mut deck_query: Query<&mut Text, With<DeckArea>>,
-    mut game_state: ResMut<NextState<GameState>>,
+    mut game_state: ResMut<NextState<MatchState>>,
 ) {
     println!("dealed north done poker");
-    game_state.set(GameState::WestTurn);
+    game_state.set(MatchState::WestTurn);
 }
 
 pub fn deal_west(
     mut poker_query: Query<(&PokerCard, &PokerCardStatus)>,
     mut deck_query: Query<&mut Text, With<DeckArea>>,
-    mut game_state: ResMut<NextState<GameState>>,
+    mut game_state: ResMut<NextState<MatchState>>,
 ) {
     println!("dealed west done poker");
-    game_state.set(GameState::SouthTurn);
+    game_state.set(MatchState::SouthTurn);
+}
+
+pub fn match_eneded(mut poker_query: Query<(&PokerCard, &mut PokerCardStatus)>, mut deck_query: Query<(&mut Text, &DeckArea)>) {
+    println!("match ended, move pockers in hand to used heap");
+    let mut to_unsed = 0;
+    for (card, mut status) in poker_query.iter_mut() {
+        if *status == PokerCardStatus::OnTable {
+            break;
+        }
+        if *status == PokerCardStatus::OnHand {
+            *status = PokerCardStatus::Used;
+            to_unsed += 1;
+        }
+    }
+    if to_unsed > 0 {
+        update_deck_area(deck_query, false, to_unsed);
+    }
+}
+
+fn update_deck_area(mut deck_query: Query<(&mut Text, &DeckArea)>, deck_flag: bool, adder: i32) {
+    for (mut deck_text, area_flag) in deck_query.iter_mut() {
+        if (*area_flag == DeckArea::USED) == deck_flag {
+            continue;
+        }
+        let text = &deck_text.sections[0].value;
+        let current_count: i32 = text.split_whitespace().last().unwrap_or("0").parse().unwrap_or(0);
+        let new_count = current_count + adder;
+        deck_text.sections[0].value = format!("{} {}", text.trim_end_matches(char::is_numeric), new_count);
+
+        break;
+    }
 }

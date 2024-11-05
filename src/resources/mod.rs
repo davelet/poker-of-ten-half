@@ -15,7 +15,7 @@ pub enum AppState {
 }
 
 #[derive(Clone, Copy, Default, Eq, PartialEq, Debug, Hash, States)]
-pub enum GameState {
+pub enum MatchState {
     #[default]
     // Idle, // 等待发牌
     // Deal,      // 发牌
