@@ -199,23 +199,32 @@ pub fn display_pokers(
     mut deal_state: ResMut<NextState<DealPokerInMatch>>,
     game_state: ResMut<State<MatchState>>,
     mut dealing_query: Query<(Entity, &PokerCard, &DealingPokerRecord)>,
+    mut type_text_query: Query<(&PokerCardAreaTypeText, &SinglePokerAreaSlot)>,
+    mut rank_text_query: Query<(&PokerCardAreaRankText, &SinglePokerAreaSlot)>,
 ) {
     let state = game_state.get();
     let mut card = None;
-    for (e, p, dr) in dealing_query.iter_mut() {
+    for (e, p, _) in dealing_query.iter_mut() {
         card = Some(p.clone());
         commands.entity(e).despawn();
+        break;
+    }
+    let card = card.unwrap();
+    for (node, slot) in type_text_query.iter_mut() {
+        println!("==={:?}card: {:?}", node.1, slot);
+    }
+    for (node, slot) in rank_text_query.iter_mut() {
+        println!("+++{:?}card: {:?}", node.1, slot);
     }
 
     match *state {
         MatchState::SouthTurn => {},
-        MatchState::DealingSouth => {},
         MatchState::EastTurn => {},
         MatchState::NorthTurn => {},
         MatchState::WestTurn => {},
-        MatchState::Ended => {},
+        _ => {},
     }
-    deal_state.set(DealPokerInMatch::End);
+    deal_state.set(DealPokerInMatch::End); // 结束发牌
 }
 
 pub fn deal_south(

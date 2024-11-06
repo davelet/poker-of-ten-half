@@ -197,7 +197,7 @@ fn spawn_player(parent: &mut ChildBuilder, bg_color: Srgba, flex_direction: Flex
         });
 }
 
-fn generate_player_name(turn: &MatchState,) -> String {
+fn generate_player_name(turn: &MatchState) -> String {
     match *turn {
         MatchState::SouthTurn => "南".to_string(),
         MatchState::WestTurn => "西".to_string(),
@@ -242,7 +242,7 @@ fn spawn_cards(parent: &mut ChildBuilder, turn: &MatchState) {
             ..default()
         })
         .with_children(|parent| {
-            for _ in 1..=5 {
+            for idx in 1..=5 {
                 parent
                     .spawn(NodeBundle {
                         style: Style {
@@ -256,10 +256,11 @@ fn spawn_cards(parent: &mut ChildBuilder, turn: &MatchState) {
                         ..default()
                     })
                     .with_children(|parent| {
-                        parent.spawn((TextBundle::from_section(POKER_EMPTY_SLOT_TEXT, style.clone()), SinglePokerArea::Type));
-                        parent.spawn((TextBundle::from_section(BLANK_STRING, style.clone()), SinglePokerArea::Rank));
-                    })
-                    .insert(SinglePokerAreaSlot(turn.clone()));
+                        parent.spawn(PokerCardAreaAlongWithPlayer {
+                            poker_type: PokerCardAreaTypeText(TextBundle::from_section(POKER_EMPTY_SLOT_TEXT, style.clone()), idx),
+                            poker_rank: PokerCardAreaRankText(TextBundle::from_section(BLANK_STRING, style.clone()), idx),
+                        }).insert(SinglePokerAreaSlot(turn.clone()));
+                    });
             }
         });
     parent

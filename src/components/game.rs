@@ -107,18 +107,30 @@ pub enum DeckArea {
     USED,
 }
 
-#[derive(Component, PartialEq, PartialOrd, Clone, Copy)]
-pub enum SinglePokerArea {
-    Rank, // 数字
-    Type, // 花色
-}
-
-#[derive(Component)]
+#[derive(Component, Debug)]
 pub struct SinglePokerAreaSlot(pub MatchState);
 
 #[derive(Component)]
 pub struct PlayerPointShown;
 
 // 记录需要跳过的玩家，直接进入其他玩家轮次
-#[derive(Component)]
+#[derive(Component, Debug, Clone, Copy)]
 pub struct SkipTurn(pub MatchState);
+
+// #[derive(Component, Debug, Clone, Copy)]
+// pub struct SinglePokerAreaForType(pub u8);
+
+// #[derive(Component, Debug, Clone, Copy)]
+// pub struct SinglePokerAreaForRank(pub u8);
+
+#[derive(Component, Debug)]
+pub struct PokerCardAreaTypeText(pub TextBundle, pub u8);
+
+#[derive(Component, Debug)]
+pub struct PokerCardAreaRankText(pub TextBundle, pub u8);
+
+#[derive(Bundle)]
+pub struct PokerCardAreaAlongWithPlayer {
+    pub poker_type: PokerCardAreaTypeText,
+    pub poker_rank: PokerCardAreaRankText,
+}
