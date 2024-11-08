@@ -133,4 +133,26 @@ pub struct PokerCardAreaRankText(pub TextBundle, pub u8);
 pub struct PokerCardAreaAlongWithPlayer {
     pub poker_type: PokerCardAreaTypeText,
     pub poker_rank: PokerCardAreaRankText,
+    pub _placeholder_: Node, // to skip a warning of `no UI component`
+}
+
+impl PokerCardAreaAlongWithPlayer {
+    pub fn new(poker_type: &str, rank: &str, style: TextStyle, idx: u8) -> Self {
+        Self {
+            poker_type: PokerCardAreaTypeText(
+                TextBundle {
+                    text: Text::from_section(poker_type, style.clone()),
+                    ..Default::default()
+                },
+                idx,
+            ),
+            poker_rank: PokerCardAreaRankText(
+                TextBundle {
+                    text: Text::from_section(rank, style.clone()),
+                    ..Default::default()
+                }, idx
+            ),
+            _placeholder_: Node::default(),
+        }
+    }
 }

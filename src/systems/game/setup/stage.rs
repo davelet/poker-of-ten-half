@@ -256,10 +256,9 @@ fn spawn_cards(parent: &mut ChildBuilder, turn: &MatchState) {
                         ..default()
                     })
                     .with_children(|parent| {
-                        parent.spawn(PokerCardAreaAlongWithPlayer {
-                            poker_type: PokerCardAreaTypeText(TextBundle::from_section(POKER_EMPTY_SLOT_TEXT, style.clone()), idx),
-                            poker_rank: PokerCardAreaRankText(TextBundle::from_section(BLANK_STRING, style.clone()), idx),
-                        }).insert(SinglePokerAreaSlot(turn.clone()));
+                        parent
+                            .spawn(PokerCardAreaAlongWithPlayer::new(POKER_EMPTY_SLOT_TEXT, BLANK_STRING, style.clone(), idx))
+                            .insert(SinglePokerAreaSlot(turn.clone()));
                     });
             }
         });
