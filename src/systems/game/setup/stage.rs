@@ -144,7 +144,7 @@ fn place_south_line(parent: &mut ChildBuilder) {
             let style = HanTextStyle::default().with_color(bevy::prelude::Color::Srgba(BLACK)).with_font_size(30.0).get_style();
             spawn_game_button(parent, FlexDirection::RowReverse, style.clone(), RENEW_GAME_BUTTON_TEXT, ButtonOnGamePage::RenewGameButton);
 
-            spawn_player(parent, LIGHT_CORAL, FlexDirection::ColumnReverse, MatchState::SouthTurn, true);
+            spawn_player(parent, LIGHT_CORAL, FlexDirection::ColumnReverse, MatchState::DealingSouth, true);
 
             parent
                 .spawn(NodeBundle {
@@ -199,7 +199,7 @@ fn spawn_player(parent: &mut ChildBuilder, bg_color: Srgba, flex_direction: Flex
 
 fn generate_player_name(turn: &MatchState) -> String {
     match *turn {
-        MatchState::SouthTurn => "南".to_string(),
+        MatchState::DealingSouth => "南".to_string(),
         MatchState::WestTurn => "西".to_string(),
         MatchState::NorthTurn => "北".to_string(),
         MatchState::EastTurn => "东".to_string(),

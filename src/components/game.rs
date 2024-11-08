@@ -15,7 +15,7 @@ pub enum ButtonOnGamePage {
 }
 /// 牌数，A 2,3,4,5,6,7,8,9, 10，J Q K
 #[derive(Component, Debug, Clone, Copy)]
-struct CardRank {
+pub struct CardRank {
     pub rank: i8,
 }
 
@@ -26,7 +26,7 @@ struct CardPoint {
 }
 
 #[derive(Component, Debug, Clone, Copy)]
-struct CardType {
+pub struct CardType {
     pub suite: PokerSuiteEnum,
 }
 

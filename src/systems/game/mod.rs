@@ -11,7 +11,7 @@ use bevy::{
 use rand::seq::SliceRandom;
 use setup::prelude::*;
 
-use crate::{components::prelude::*, resources::prelude::*};
+use crate::{components::prelude::*, constants::*, resources::prelude::*};
 
 mod setup;
 
@@ -186,7 +186,7 @@ fn show_poker_for_player(
     mut deal_state: ResMut<NextState<DealPokerInMatch>>,
 ) {
     match player {
-        MatchState::SouthTurn | MatchState::EastTurn | MatchState::NorthTurn | MatchState::WestTurn => {
+        MatchState::DealingSouth | MatchState::EastTurn | MatchState::NorthTurn | MatchState::WestTurn => {
             deal_state.set(DealPokerInMatch::Deal);
             commands.spawn((card.clone(), DealingPokerRecord));
         },
@@ -211,10 +211,16 @@ pub fn display_pokers(
     }
     let card = card.unwrap();
     for (node, slot) in type_text_query.iter_mut() {
-        println!("==={:?}card: {:?}", node.1, slot);
+        if slot.0 == *state && node.0.text.sections[0].value == POKER_EMPTY_SLOT_TEXT {
+            println!("==={:?}card: {:?} > {:?}", node.1, slot, card.suite.suite);
+            break;
+        }
     }
     for (node, slot) in rank_text_query.iter_mut() {
-        println!("+++{:?}card: {:?}", node.1, slot);
+        if slot.0 == *state && node.0.text.sections[0].value == BLANK_STRING {
+            println!("+++{:?}card: {:?} > {:?}", node.1, slot, card.rank.rank);
+            break;
+        }
     }
 
     match *state {
@@ -225,6 +231,17 @@ pub fn display_pokers(
         _ => {},
     }
     deal_state.set(DealPokerInMatch::End); // 结束发牌
+}
+
+pub fn next_player(current_state: Res<State<MatchState>>, mut game_state: ResMut<NextState<MatchState>>) {
+    let state = current_state.get();
+    match *state {
+        MatchState::DealingSouth => {game_state.set(MatchState::EastTurn);},
+        MatchState::EastTurn => game_state.set(MatchState::NorthTurn),
+        MatchState::NorthTurn => game_state.set(MatchState::WestTurn),
+        MatchState::WestTurn => game_state.set(MatchState::SouthTurn),
+        _ => {},
+    }
 }
 
 pub fn deal_south(
@@ -241,9 +258,8 @@ pub fn deal_south(
 
         *status = PokerCardStatus::OnHand;
         update_deck_area(deck_query, true, -1);
-        show_poker_for_player(commands, MatchState::SouthTurn, card, deal_state);
+        show_poker_for_player(commands, MatchState::DealingSouth, card, deal_state);
 
-        game_state.set(MatchState::EastTurn);
         return;
     }
     game_state.set(MatchState::Ended);
@@ -261,6 +277,7 @@ pub fn deal_east(
     mut deck_query: Query<&mut Text, With<DeckArea>>,
     skip_turn_query: Query<&SkipTurn>,
     mut game_state: ResMut<NextState<MatchState>>,
+    mut deal_state: ResMut<NextState<DealPokerInMatch>>
 ) {
     // for (card, status) in poker_query.iter() {
     //     println!("{:?} {:?} ", card, status);
@@ -277,7 +294,7 @@ pub fn deal_east(
         }
     }
     if !skip {
-        // println!("skip east turn");
+        deal_state.set(DealPokerInMatch::Deal);
     }
 
     println!("dealed east done poker");
@@ -288,18 +305,22 @@ pub fn deal_north(
     mut poker_query: Query<(&PokerCard, &PokerCardStatus)>,
     mut deck_query: Query<&mut Text, With<DeckArea>>,
     mut game_state: ResMut<NextState<MatchState>>,
+    mut deal_state: ResMut<NextState<DealPokerInMatch>>
 ) {
     println!("dealed north done poker");
-    game_state.set(MatchState::WestTurn);
+    deal_state.set(DealPokerInMatch::Deal);
+    // game_state.set(MatchState::WestTurn);
 }
 
 pub fn deal_west(
     mut poker_query: Query<(&PokerCard, &PokerCardStatus)>,
     mut deck_query: Query<&mut Text, With<DeckArea>>,
     mut game_state: ResMut<NextState<MatchState>>,
+    mut deal_state: ResMut<NextState<DealPokerInMatch>>
 ) {
     println!("dealed west done poker");
-    game_state.set(MatchState::SouthTurn);
+    deal_state.set(DealPokerInMatch::Deal);
+    // game_state.set(MatchState::SouthTurn);
 }
 
 pub fn match_eneded(mut poker_query: Query<(&PokerCard, &mut PokerCardStatus)>, mut deck_query: Query<(&mut Text, &DeckArea)>) {
