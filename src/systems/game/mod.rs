@@ -203,6 +203,7 @@ pub fn display_pokers(
     mut rank_text_query: Query<(&PokerCardAreaRankText, &SinglePokerAreaSlot)>,
 ) {
     let state = game_state.get();
+    println!("00000000state: {:?}", state);
     let mut card = None;
     for (e, p, _) in dealing_query.iter_mut() {
         card = Some(p.clone());
@@ -236,7 +237,9 @@ pub fn display_pokers(
 pub fn next_player(current_state: Res<State<MatchState>>, mut game_state: ResMut<NextState<MatchState>>) {
     let state = current_state.get();
     match *state {
-        MatchState::DealingSouth => {game_state.set(MatchState::EastTurn);},
+        MatchState::DealingSouth => {
+            game_state.set(MatchState::EastTurn);
+        },
         MatchState::EastTurn => game_state.set(MatchState::NorthTurn),
         MatchState::NorthTurn => game_state.set(MatchState::WestTurn),
         MatchState::WestTurn => game_state.set(MatchState::SouthTurn),
@@ -246,10 +249,21 @@ pub fn next_player(current_state: Res<State<MatchState>>, mut game_state: ResMut
 
 pub fn deal_south(
     commands: Commands,
+    poker_query: Query<(&PokerCard, &mut PokerCardStatus)>,
+    deck_query: Query<(&mut Text, &DeckArea)>,
+    game_state: ResMut<NextState<MatchState>>,
+    deal_state: ResMut<NextState<DealPokerInMatch>>,
+) {
+    deal_single_poker(commands, poker_query, deck_query, deal_state, game_state, MatchState::DealingSouth);
+}
+
+fn deal_single_poker(
+    commands: Commands,
     mut poker_query: Query<(&PokerCard, &mut PokerCardStatus)>,
     deck_query: Query<(&mut Text, &DeckArea)>,
-    mut game_state: ResMut<NextState<MatchState>>,
     deal_state: ResMut<NextState<DealPokerInMatch>>,
+    mut game_state: ResMut<NextState<MatchState>>,
+    player: MatchState,
 ) {
     for (card, mut status) in poker_query.iter_mut() {
         if *status != PokerCardStatus::OnTable {
@@ -258,7 +272,7 @@ pub fn deal_south(
 
         *status = PokerCardStatus::OnHand;
         update_deck_area(deck_query, true, -1);
-        show_poker_for_player(commands, MatchState::DealingSouth, card, deal_state);
+        show_poker_for_player(commands, player, card, deal_state);
 
         return;
     }
@@ -273,18 +287,14 @@ pub fn waiting_deal_south(mut game_state: ResMut<NextState<MatchState>>, skip_tu
 }
 
 pub fn deal_east(
-    mut poker_query: Query<(&PokerCard, &PokerCardStatus)>,
-    mut deck_query: Query<&mut Text, With<DeckArea>>,
+    commands: Commands,
     skip_turn_query: Query<&SkipTurn>,
     mut game_state: ResMut<NextState<MatchState>>,
-    mut deal_state: ResMut<NextState<DealPokerInMatch>>
+    deal_state: ResMut<NextState<DealPokerInMatch>>,
+    poker_query: Query<(&PokerCard, &mut PokerCardStatus)>,
+    deck_query: Query<(&mut Text, &DeckArea)>,
+    player_count: Res<MatchPlayerCount>,
 ) {
-    // for (card, status) in poker_query.iter() {
-    //     println!("{:?} {:?} ", card, status);
-    //     for deck_text in deck_query.iter_mut() {
-    //         // println!("{:?}", deck_text.sections[0].value);
-    //     }
-    // }
     let mut skip = false;
     for turn in skip_turn_query.iter() {
         println!("{:?}", turn.0);
@@ -293,8 +303,9 @@ pub fn deal_east(
             break;
         }
     }
-    if !skip {
-        deal_state.set(DealPokerInMatch::Deal);
+    if !skip && *player_count.into_inner() != MatchPlayerCount::One {
+        deal_single_poker(commands, poker_query, deck_query, deal_state, game_state, MatchState::EastTurn);
+        return;
     }
 
     println!("dealed east done poker");
@@ -302,25 +313,54 @@ pub fn deal_east(
 }
 
 pub fn deal_north(
-    mut poker_query: Query<(&PokerCard, &PokerCardStatus)>,
-    mut deck_query: Query<&mut Text, With<DeckArea>>,
+    commands: Commands,
+    poker_query: Query<(&PokerCard, &mut PokerCardStatus)>,
+    deck_query: Query<(&mut Text, &DeckArea)>,
     mut game_state: ResMut<NextState<MatchState>>,
-    mut deal_state: ResMut<NextState<DealPokerInMatch>>
+    deal_state: ResMut<NextState<DealPokerInMatch>>,
+    skip_turn_query: Query<&SkipTurn>,
 ) {
+    let mut skip = false;
+    for turn in skip_turn_query.iter() {
+        println!("{:?}", turn.0);
+        if turn.0 == MatchState::NorthTurn {
+            skip = true;
+            break;
+        }
+    }
+    if !skip {
+        deal_single_poker(commands, poker_query, deck_query, deal_state, game_state, MatchState::NorthTurn);
+        return;
+    }
+
     println!("dealed north done poker");
-    deal_state.set(DealPokerInMatch::Deal);
-    // game_state.set(MatchState::WestTurn);
+    game_state.set(MatchState::WestTurn);
 }
 
 pub fn deal_west(
-    mut poker_query: Query<(&PokerCard, &PokerCardStatus)>,
-    mut deck_query: Query<&mut Text, With<DeckArea>>,
+    commands: Commands,
+    poker_query: Query<(&PokerCard, &mut PokerCardStatus)>,
+    deck_query: Query<(&mut Text, &DeckArea)>,
     mut game_state: ResMut<NextState<MatchState>>,
-    mut deal_state: ResMut<NextState<DealPokerInMatch>>
+    deal_state: ResMut<NextState<DealPokerInMatch>>,
+    skip_turn_query: Query<&SkipTurn>,
+    player_count: Res<MatchPlayerCount>,
 ) {
+    let mut skip = false;
+    for turn in skip_turn_query.iter() {
+        println!("{:?}", turn.0);
+        if turn.0 == MatchState::WestTurn {
+            skip = true;
+            break;
+        }
+    }
+    if !skip && *player_count.into_inner() == MatchPlayerCount::Three {
+        deal_single_poker(commands, poker_query, deck_query, deal_state, game_state, MatchState::WestTurn);
+        return;
+    }
+
     println!("dealed west done poker");
-    deal_state.set(DealPokerInMatch::Deal);
-    // game_state.set(MatchState::SouthTurn);
+    game_state.set(MatchState::SouthTurn);
 }
 
 pub fn match_eneded(mut poker_query: Query<(&PokerCard, &mut PokerCardStatus)>, mut deck_query: Query<(&mut Text, &DeckArea)>) {
@@ -348,7 +388,8 @@ fn update_deck_area(mut deck_query: Query<(&mut Text, &DeckArea)>, deck_flag: bo
         let text = &deck_text.sections[0].value;
         let current_count: i32 = text.split_whitespace().last().unwrap_or("0").parse().unwrap_or(0);
         let new_count = current_count + adder;
-        deck_text.sections[0].value = format!("{} {}", text.trim_end_matches(char::is_numeric), new_count);
+        deck_text.sections[0].value = format!("{} {}", text.trim_end_matches(char::is_numeric).trim(), new_count);
+        println!("deck area: {}, new count: {}", deck_text.sections[0].value, new_count);
 
         break;
     }

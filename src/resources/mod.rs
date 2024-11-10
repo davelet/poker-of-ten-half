@@ -37,7 +37,7 @@ pub enum DealPokerInMatch {
 #[derive(Component)]
 pub struct DealingPokerRecord;
 
-#[derive(Resource)]
+#[derive(Resource, PartialEq, Eq)]
 pub enum MatchPlayerCount {
     One = 1,
     Two = 2,
