@@ -1,4 +1,4 @@
-use bevy::{color::palettes::css::*, math::bool, prelude::*};
+use bevy::{color::palettes::css::*, math::bool, prelude::*, scene::ron::de};
 
 use crate::{components::prelude::*, constants::*, HanTextStyle, MatchState};
 
@@ -257,8 +257,18 @@ fn spawn_cards(parent: &mut ChildBuilder, turn: &MatchState) {
                     })
                     .with_children(|parent| {
                         parent
-                            .spawn(PokerCardAreaAlongWithPlayer::new(POKER_EMPTY_SLOT_TEXT, BLANK_STRING, style.clone(), idx))
-                            .insert(SinglePokerAreaSlot(turn.clone()));
+                            .spawn(NodeBundle {
+                                ..default()
+                            }).with_children(|parent| {
+                                parent.spawn(TextBundle {
+                                    text: Text::from_section(POKER_EMPTY_SLOT_TEXT, style.clone()),
+                                    ..default()
+                                }).insert((PokerCardTypeSlotWithIndex(idx), SinglePokerAreaSlot(turn.clone())));
+                                parent.spawn(TextBundle{
+                                    text: Text::from_section(BLANK_STRING, style.clone()),
+                                    ..default()
+                                }).insert((PokerCardRankSlotWithIndex(idx), SinglePokerAreaSlot(turn.clone())));
+                            });
                     });
             }
         });

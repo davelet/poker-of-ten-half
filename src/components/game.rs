@@ -107,8 +107,6 @@ pub enum DeckArea {
     USED,
 }
 
-#[derive(Component, Debug)]
-pub struct SinglePokerAreaSlot(pub MatchState);
 
 #[derive(Component)]
 pub struct PlayerPointShown;
@@ -117,42 +115,11 @@ pub struct PlayerPointShown;
 #[derive(Component, Debug, Clone, Copy)]
 pub struct SkipTurn(pub MatchState);
 
-// #[derive(Component, Debug, Clone, Copy)]
-// pub struct SinglePokerAreaForType(pub u8);
-
-// #[derive(Component, Debug, Clone, Copy)]
-// pub struct SinglePokerAreaForRank(pub u8);
+#[derive(Component, Debug)]
+pub struct PokerCardTypeSlotWithIndex(pub u8);
 
 #[derive(Component, Debug)]
-pub struct PokerCardAreaTypeText(pub TextBundle, pub u8);
+pub struct PokerCardRankSlotWithIndex(pub u8);
 
 #[derive(Component, Debug)]
-pub struct PokerCardAreaRankText(pub TextBundle, pub u8);
-
-#[derive(Bundle)]
-pub struct PokerCardAreaAlongWithPlayer {
-    pub poker_type: PokerCardAreaTypeText,
-    pub poker_rank: PokerCardAreaRankText,
-    pub _placeholder_: Node, // to skip a warning of `no UI component`
-}
-
-impl PokerCardAreaAlongWithPlayer {
-    pub fn new(poker_type: &str, rank: &str, style: TextStyle, idx: u8) -> Self {
-        Self {
-            poker_type: PokerCardAreaTypeText(
-                TextBundle {
-                    text: Text::from_section(poker_type, style.clone()),
-                    ..Default::default()
-                },
-                idx,
-            ),
-            poker_rank: PokerCardAreaRankText(
-                TextBundle {
-                    text: Text::from_section(rank, style.clone()),
-                    ..Default::default()
-                }, idx
-            ),
-            _placeholder_: Node::default(),
-        }
-    }
-}
+pub struct SinglePokerAreaSlot(pub MatchState);
