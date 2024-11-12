@@ -33,3 +33,14 @@ pub fn game_plugin(app: &mut App) {
         .add_systems(OnEnter(DealPokerInMatch::End), next_player)
         .add_systems(OnExit(AppState::Game), despawn_screen::<OnGameScreen>);
 }
+
+pub fn exit_plugin(app: &mut App) {
+    app.add_systems(OnEnter(AppState::Panic), exit_screen);
+}
+
+fn exit_screen(mut commands: Commands) {
+    // commands.spawn((
+    //     NodeBundle
+    // ))
+    eprintln!("123-----------");
+}

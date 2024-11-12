@@ -199,8 +199,8 @@ pub fn display_pokers(
     mut deal_state: ResMut<NextState<DealPokerInMatch>>,
     game_state: ResMut<State<MatchState>>,
     mut dealing_query: Query<(Entity, &PokerCard, &DealingPokerRecord)>,
-    mut type_text_query: Query<(&Text, &SinglePokerAreaSlot, &PokerCardTypeSlotWithIndex)>,
-    mut rank_text_query: Query<(&Text, &SinglePokerAreaSlot, &PokerCardRankSlotWithIndex)>,
+    mut type_text_query: Query<(&mut Text, &SinglePokerAreaSlot, &PokerCardTypeSlotWithIndex)>,
+    mut rank_text_query: Query<(&mut Text, &SinglePokerAreaSlot, &PokerCardRankSlotWithIndex)>,
 ) {
     let state = game_state.get();
     let mut card = None;
@@ -211,29 +211,40 @@ pub fn display_pokers(
     }
     let card = card.unwrap();
     println!("card: {:?}", card);
-    for (node, slot, type_flag) in type_text_query.iter_mut() {
+    for (mut node, slot, type_flag) in type_text_query.iter_mut() {
         if slot.0 == *state && node.sections[0].value == POKER_EMPTY_SLOT_TEXT {
             println!("==={:?}card: {:?} > {:?}", node, slot, type_flag);
+            node.sections[0].value = generate_type_text(&card.suite);
             break;
         }
     }
-    for (node, slot, rank) in rank_text_query.iter_mut() {
+    for (mut node, slot, rank) in rank_text_query.iter_mut() {
         if slot.0 == *state && node.sections[0].value == BLANK_STRING {
             println!("+++{:?}card: {:?} > {:?}", node, slot, rank);
+            node.sections[0].value = card.rank.rank.to_string();
             break;
         }
     }
 
-    match *state {
-        MatchState::SouthTurn => {},
-        MatchState::EastTurn => {},
-        MatchState::NorthTurn => {},
-        MatchState::WestTurn => {},
-        _ => {},
-    }
+    // match *state {
+    //     MatchState::SouthTurn => {},
+    //     MatchState::EastTurn => {},
+    //     MatchState::NorthTurn => {},
+    //     MatchState::WestTurn => {},
+    //     _ => {},
+    // }
     deal_state.set(DealPokerInMatch::End); // 结束发牌
 }
 
+fn generate_type_text(suite: &CardType) -> String {
+    match suite.suite {
+        PokerSuiteEnum::Spade => "黑桃".to_string(),
+        PokerSuiteEnum::Heart => "红桃".to_string(),
+        PokerSuiteEnum::Diamond => "方片".to_string(),
+        PokerSuiteEnum::Club => "梅花".to_string(),
+        PokerSuiteEnum::Joker => "王牌".to_string(),
+    }
+}
 pub fn next_player(current_state: Res<State<MatchState>>, mut game_state: ResMut<NextState<MatchState>>) {
     let state = current_state.get();
     match *state {

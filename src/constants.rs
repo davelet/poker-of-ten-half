@@ -11,6 +11,7 @@ pub const APP_FONT: &str = "Alibaba-PuHuiTi-Regular.otf";
 pub const APP_ICON: &str = "poker-title.png";
 pub static mut HAN_FONT_OPTION: Option<Handle<Font>> = None;
 pub static mut APP_ICON_IMAGE: Option<Handle<Image>> = None;
+pub static mut PANIC_FLAG: bool = false;
 
 pub const TEXT_COLOR: Color = Color::srgb(0.9, 0.9, 0.9);
 pub const PLAYER_PLOT_TEXT: &str = "玩家：";
