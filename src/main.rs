@@ -34,7 +34,7 @@ fn main() {
 }
 
 fn check_panic_and_switch_state(state: ResMut<State<AppState>>, mut next_state: ResMut<NextState<AppState>>) {
-    println!("check_panic_and_switch_state");
+    // println!("check_panic_and_switch_state");
     if unsafe { PANIC_FLAG } && *state.get() != AppState::Panic {
         println!("panic set");
         next_state.set(AppState::Panic);

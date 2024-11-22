@@ -199,8 +199,8 @@ pub fn display_pokers(
     mut deal_state: ResMut<NextState<DealPokerInMatch>>,
     game_state: ResMut<State<MatchState>>,
     mut dealing_query: Query<(Entity, &PokerCard, &DealingPokerRecord)>,
-    mut type_text_query: Query<(&mut Text, &SinglePokerAreaSlot, &PokerCardTypeSlotWithIndex)>,
-    mut rank_text_query: Query<(&mut Text, &SinglePokerAreaSlot, &PokerCardRankSlotWithIndex)>,
+    mut type_text_query: Query<(&mut Text, &SinglePokerAreaSlot, &PokerCardTypeSlotWithIndex), Without<PokerCardRankSlotWithIndex>>,
+    mut rank_text_query: Query<(&mut Text, &SinglePokerAreaSlot, &PokerCardRankSlotWithIndex), Without<PokerCardTypeSlotWithIndex>>,
 ) {
     let state = game_state.get();
     let mut card = None;

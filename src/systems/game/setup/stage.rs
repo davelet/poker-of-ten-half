@@ -256,19 +256,18 @@ fn spawn_cards(parent: &mut ChildBuilder, turn: &MatchState) {
                         ..default()
                     })
                     .with_children(|parent| {
-                        parent
-                            .spawn(NodeBundle {
-                                ..default()
-                            }).with_children(|parent| {
-                                parent.spawn(TextBundle {
-                                    text: Text::from_section(POKER_EMPTY_SLOT_TEXT, style.clone()),
-                                    ..default()
-                                }).insert((PokerCardTypeSlotWithIndex(idx), SinglePokerAreaSlot(turn.clone())));
-                                parent.spawn(TextBundle{
-                                    text: Text::from_section(BLANK_STRING, style.clone()),
-                                    ..default()
-                                }).insert((PokerCardRankSlotWithIndex(idx), SinglePokerAreaSlot(turn.clone())));
-                            });
+                        parent.spawn(NodeBundle { ..default() }).with_children(|parent| {
+                            parent.spawn((
+                                TextBundle { text: Text::from_section(POKER_EMPTY_SLOT_TEXT, style.clone()), ..default() },
+                                PokerCardTypeSlotWithIndex(idx),
+                                SinglePokerAreaSlot(turn.clone()),
+                            ));
+                            parent.spawn((
+                                TextBundle { text: Text::from_section(BLANK_STRING, style.clone()), ..default() },
+                                PokerCardRankSlotWithIndex(idx),
+                                SinglePokerAreaSlot(turn.clone()),
+                            ));
+                        });
                     });
             }
         });
