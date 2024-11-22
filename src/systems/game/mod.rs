@@ -226,14 +226,12 @@ pub fn display_pokers(
         }
     }
 
-    // match *state {
-    //     MatchState::SouthTurn => {},
-    //     MatchState::EastTurn => {},
-    //     MatchState::NorthTurn => {},
-    //     MatchState::WestTurn => {},
-    //     _ => {},
-    // }
     deal_state.set(DealPokerInMatch::End); // 结束发牌
+}
+
+// 计算当前牌手的牌数和点数。牌数最多5张，点数不能超过10点半
+pub fn compute_point() {
+    
 }
 
 fn generate_type_text(suite: &CardType) -> String {
