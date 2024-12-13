@@ -286,7 +286,7 @@ fn spawn_cards(parent: &mut ChildBuilder, turn: &MatchState) {
                 .with_children(|parent| {
                     let style = TextStyle { font_size: 30.0, ..style };
                     parent.spawn(TextBundle::from_section(TOTAL_POINT_TEXT, style.clone()));
-                    parent.spawn((TextBundle::from_section(BLANK_STRING, style.clone()), PlayerPointShown));
+                    parent.spawn((TextBundle::from_section(BLANK_STRING, style.clone()), PlayerPointShown(turn.clone())));
                 });
         });
 }

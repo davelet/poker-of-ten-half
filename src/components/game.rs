@@ -109,7 +109,7 @@ pub enum DeckArea {
 
 
 #[derive(Component)]
-pub struct PlayerPointShown;
+pub struct PlayerPointShown(pub MatchState);
 
 // 记录需要跳过的玩家，直接进入其他玩家轮次
 #[derive(Component, Debug, Clone, Copy)]
