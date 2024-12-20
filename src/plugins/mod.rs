@@ -29,7 +29,7 @@ pub fn game_plugin(app: &mut App) {
         .add_systems(OnEnter(MatchState::NorthTurn), deal_north)
         .add_systems(OnEnter(MatchState::WestTurn), deal_west)
         .add_systems(OnEnter(MatchState::Ended), match_eneded)
-        .add_systems(OnEnter(DealPokerInMatch::Deal), (display_pokers, compute_point).chain())
+        .add_systems(OnEnter(DealPokerInMatch::Deal), display_pokers)
         .add_systems(OnEnter(DealPokerInMatch::End), next_player)
         .add_systems(OnExit(AppState::Game), despawn_screen::<OnGameScreen>);
 }

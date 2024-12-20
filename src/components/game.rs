@@ -21,7 +21,7 @@ pub struct CardRank {
 
 // 卡牌点数
 #[derive(Component, Debug, Clone, Copy)]
-struct CardPoint {
+pub struct CardPoint {
     pub point_type: PokerReducedPoint,
 }
 
@@ -47,6 +47,15 @@ pub enum PokerSuiteEnum {
 pub enum PokerReducedPoint {
     NaturalPoint(u8),
     HalfPoint, // 1/2
+}
+
+impl PokerReducedPoint {
+    pub fn point(&self) -> f32 {
+        match self {
+            PokerReducedPoint::NaturalPoint(point) => *point as f32,
+            PokerReducedPoint::HalfPoint => 0.5,
+        }
+    }
 }
 
 #[derive(Component, Debug, Clone, Copy)]
@@ -108,7 +117,7 @@ pub enum DeckArea {
 }
 
 
-#[derive(Component)]
+#[derive(Component, Debug)]
 pub struct PlayerPointShown(pub MatchState);
 
 // 记录需要跳过的玩家，直接进入其他玩家轮次

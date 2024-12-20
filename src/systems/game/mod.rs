@@ -201,6 +201,7 @@ pub fn display_pokers(
     mut dealing_query: Query<(Entity, &PokerCard, &DealingPokerRecord)>,
     mut type_text_query: Query<(&mut Text, &SinglePokerAreaSlot, &PokerCardTypeSlotWithIndex), Without<PokerCardRankSlotWithIndex>>,
     mut rank_text_query: Query<(&mut Text, &SinglePokerAreaSlot, &PokerCardRankSlotWithIndex), Without<PokerCardTypeSlotWithIndex>>,
+    mut player_point_query: Query<(&mut Text, &PlayerPointShown), (Without<PokerCardTypeSlotWithIndex>, Without<PokerCardRankSlotWithIndex>)>,
 ) {
     let state = game_state.get();
     let mut card = None;
@@ -210,28 +211,32 @@ pub fn display_pokers(
         break;
     }
     let card = card.unwrap();
-    println!("card: {:?}", card);
+    let mut all_pokers = vec![card.point.point_type.point()];
     for (mut node, slot, type_flag) in type_text_query.iter_mut() {
         if slot.0 == *state && node.sections[0].value == POKER_EMPTY_SLOT_TEXT {
-            println!("==={:?}card: {:?} > {:?}", node, slot, type_flag);
             node.sections[0].value = generate_type_text(&card.suite);
             break;
         }
     }
     for (mut node, slot, rank) in rank_text_query.iter_mut() {
-        if slot.0 == *state && node.sections[0].value == BLANK_STRING {
-            println!("+++{:?}card: {:?} > {:?}", node, slot, rank);
-            node.sections[0].value = card.rank.rank.to_string();
-            break;
+        if slot.0 == *state {
+            if node.sections[0].value == BLANK_STRING {
+                node.sections[0].value = card.rank.rank.to_string();
+                break;
+            } else {
+                all_pokers.push(node.sections[0].value.parse::<f32>().ok().unwrap())
+            }
         }
     }
-
+    let point = all_pokers.iter().sum::<f32>();
+    println!("{:?} point: {}", state, point);
+    // 计算当前牌手的牌数和点数。牌数最多5张，点数不能超过10点半
+    for (mut point_text, player) in player_point_query.iter_mut() {
+        if player.0 == *state {
+            point_text.sections[0].value = point.to_string();
+        }
+    }
     deal_state.set(DealPokerInMatch::End); // 结束发牌
-}
-
-// 计算当前牌手的牌数和点数。牌数最多5张，点数不能超过10点半
-pub fn compute_point() {
-    
 }
 
 fn generate_type_text(suite: &CardType) -> String {
