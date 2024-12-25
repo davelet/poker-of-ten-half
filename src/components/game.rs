@@ -116,7 +116,6 @@ pub enum DeckArea {
     USED,
 }
 
-
 #[derive(Component, Debug)]
 pub struct PlayerPointShown(pub MatchState);
 

@@ -163,7 +163,7 @@ pub fn game_key_input(
     } else if keyboard_input.just_released(KeyCode::KeyN) {
         set_button_color(ButtonOnGamePage::DealPokerButton, Color::NONE.into(), button_query);
     } else if keyboard_input.just_pressed(KeyCode::KeyJ) {
-        commands.spawn(SkipTurn(MatchState::SouthTurn));
+        commands.spawn(SkipTurn(MatchState::DealingSouth));
         game_state.set(MatchState::EastTurn);
     }
 }
@@ -201,7 +201,10 @@ pub fn display_pokers(
     mut dealing_query: Query<(Entity, &PokerCard, &DealingPokerRecord)>,
     mut type_text_query: Query<(&mut Text, &SinglePokerAreaSlot, &PokerCardTypeSlotWithIndex), Without<PokerCardRankSlotWithIndex>>,
     mut rank_text_query: Query<(&mut Text, &SinglePokerAreaSlot, &PokerCardRankSlotWithIndex), Without<PokerCardTypeSlotWithIndex>>,
-    mut player_point_query: Query<(&mut Text, &PlayerPointShown), (Without<PokerCardTypeSlotWithIndex>, Without<PokerCardRankSlotWithIndex>)>,
+    mut player_point_query: Query<
+        (&mut Text, &PlayerPointShown),
+        (Without<PokerCardTypeSlotWithIndex>, Without<PokerCardRankSlotWithIndex>),
+    >,
 ) {
     let state = game_state.get();
     let mut card = None;
@@ -228,13 +231,23 @@ pub fn display_pokers(
             }
         }
     }
-    let point = all_pokers.iter().sum::<f32>();
-    println!("{:?} point: {}", state, point);
-    // 计算当前牌手的牌数和点数。牌数最多5张，点数不能超过10点半
+    // 计算总点数 TODO 这里需要重写设计逻辑，不能单独使用一套算法，应该使用枚举里的方法
+    let point = all_pokers.iter().map(|&f| if f > 10.0 || f < 1.0 { 0.5 } else { f }).sum::<f32>();
+    // 显示当前牌手的牌数和点数。牌数最多5张，点数不能超过10点半
     for (mut point_text, player) in player_point_query.iter_mut() {
         if player.0 == *state {
             point_text.sections[0].value = point.to_string();
         }
+    }
+    if all_pokers.len() >= 5 {
+        commands.spawn(SkipTurn(state.clone()));
+    } else if state == &MatchState::DealingSouth {
+        if point > 10f32 {
+            commands.spawn(SkipTurn(state.clone()));
+        }
+    } else if point > 8f32 {
+        // 超过8就不再要牌 TODO 增加配置跳过机器人轮次
+        commands.spawn(SkipTurn(state.clone()));
     }
     deal_state.set(DealPokerInMatch::End); // 结束发牌
 }
@@ -248,17 +261,81 @@ fn generate_type_text(suite: &CardType) -> String {
         PokerSuiteEnum::Joker => "王牌".to_string(),
     }
 }
-pub fn next_player(current_state: Res<State<MatchState>>, mut game_state: ResMut<NextState<MatchState>>) {
-    let state = current_state.get();
-    match *state {
-        MatchState::DealingSouth => {
-            game_state.set(MatchState::EastTurn);
-        },
-        MatchState::EastTurn => game_state.set(MatchState::NorthTurn),
-        MatchState::NorthTurn => game_state.set(MatchState::WestTurn),
-        MatchState::WestTurn => game_state.set(MatchState::SouthTurn),
-        _ => {},
+pub fn next_player(
+    current_state: Res<State<MatchState>>,
+    mut game_state: ResMut<NextState<MatchState>>,
+    skip_turn_query: Query<&SkipTurn>,
+) {
+    let mut bitwise = 0;
+    let south_wise = 1;
+    let east_wise = 2;
+    let north_wise = 4;
+    let west_wise = 8;
+    for kt in skip_turn_query.iter() {
+        let kt = kt.0;
+        match kt {
+            MatchState::DealingSouth => bitwise |= south_wise,
+            MatchState::EastTurn => bitwise |= east_wise,
+            MatchState::NorthTurn => bitwise |= north_wise,
+            MatchState::WestTurn => bitwise |= west_wise,
+            _ => {},
+        }
     }
+    if bitwise == south_wise | east_wise | north_wise | west_wise {
+        // 全都跳过了
+        game_state.set(MatchState::Ended);
+        return;
+    }
+
+    let state = current_state.get();
+    let next_state = match *state {
+        MatchState::DealingSouth => {
+            if bitwise & east_wise == 0 {
+                MatchState::EastTurn
+            } else if bitwise & north_wise == 0 {
+                MatchState::NorthTurn
+            } else if bitwise & west_wise == 0 {
+                MatchState::WestTurn
+            } else {
+                MatchState::Ended
+            }
+        },
+        MatchState::EastTurn => {
+            if bitwise & north_wise == 0 {
+                MatchState::NorthTurn
+            } else if bitwise & west_wise == 0 {
+                MatchState::WestTurn
+            } else if bitwise & south_wise == 0 {
+                MatchState::SouthTurn
+            } else {
+                MatchState::Ended
+            }
+        },
+        MatchState::NorthTurn => {
+            if bitwise & west_wise == 0 {
+                MatchState::WestTurn
+            } else if bitwise & south_wise == 0 {
+                MatchState::SouthTurn
+            } else if bitwise & east_wise == 0 {
+                MatchState::EastTurn
+            } else {
+                MatchState::Ended
+            }
+        },
+        MatchState::WestTurn => {
+            if bitwise & south_wise == 0 {
+                MatchState::SouthTurn
+            } else if bitwise & east_wise == 0 {
+                MatchState::EastTurn
+            } else if bitwise & north_wise == 0 {
+                MatchState::NorthTurn
+            } else {
+                MatchState::Ended
+            }
+        },
+        _ => MatchState::Ended,
+    };
+    game_state.set(next_state);
 }
 
 pub fn deal_south(
@@ -310,7 +387,6 @@ pub fn deal_east(
 ) {
     let mut skip = false;
     for turn in skip_turn_query.iter() {
-        println!("{:?}", turn.0);
         if turn.0 == MatchState::EastTurn {
             skip = true;
             break;
@@ -321,7 +397,6 @@ pub fn deal_east(
         return;
     }
 
-    println!("dealed east done poker");
     game_state.set(MatchState::NorthTurn);
 }
 
@@ -335,7 +410,6 @@ pub fn deal_north(
 ) {
     let mut skip = false;
     for turn in skip_turn_query.iter() {
-        println!("{:?}", turn.0);
         if turn.0 == MatchState::NorthTurn {
             skip = true;
             break;
@@ -346,7 +420,6 @@ pub fn deal_north(
         return;
     }
 
-    println!("dealed north done poker");
     game_state.set(MatchState::WestTurn);
 }
 
@@ -361,7 +434,6 @@ pub fn deal_west(
 ) {
     let mut skip = false;
     for turn in skip_turn_query.iter() {
-        println!("{:?}", turn.0);
         if turn.0 == MatchState::WestTurn {
             skip = true;
             break;
@@ -372,24 +444,25 @@ pub fn deal_west(
         return;
     }
 
-    println!("dealed west done poker");
     game_state.set(MatchState::SouthTurn);
 }
 
 pub fn match_eneded(mut poker_query: Query<(&PokerCard, &mut PokerCardStatus)>, mut deck_query: Query<(&mut Text, &DeckArea)>) {
-    let mut to_unsed = 0;
+    println!("MATCH ENDED");
+    let mut to_used = 0;
     for (card, mut status) in poker_query.iter_mut() {
         if *status == PokerCardStatus::OnTable {
             break;
         }
         if *status == PokerCardStatus::OnHand {
             *status = PokerCardStatus::Used;
-            to_unsed += 1;
+            to_used += 1;
         }
     }
-    if to_unsed > 0 {
-        update_deck_area(deck_query, false, to_unsed);
+    if to_used > 0 {
+        update_deck_area(deck_query, false, to_used);
     }
+    // TODO 清空玩家手牌
 }
 
 fn update_deck_area(mut deck_query: Query<(&mut Text, &DeckArea)>, deck_flag: bool, adder: i32) {

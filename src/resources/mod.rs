@@ -12,7 +12,7 @@ pub enum AppState {
     Splash,
     Menu,
     Game,
-    Panic
+    Panic,
 }
 
 #[derive(Clone, Copy, Default, Eq, PartialEq, Debug, Hash, States)]
