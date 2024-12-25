@@ -165,6 +165,8 @@ pub fn game_key_input(
     } else if keyboard_input.just_pressed(KeyCode::KeyJ) {
         commands.spawn(SkipTurn(MatchState::DealingSouth));
         game_state.set(MatchState::EastTurn);
+    } else if keyboard_input.just_pressed(KeyCode::KeyR) {
+        game_state.set(MatchState::Idle);
     }
 }
 
@@ -447,10 +449,10 @@ pub fn deal_west(
     game_state.set(MatchState::SouthTurn);
 }
 
-pub fn match_eneded(mut poker_query: Query<(&PokerCard, &mut PokerCardStatus)>, mut deck_query: Query<(&mut Text, &DeckArea)>) {
+pub fn match_ended(mut poker_query: Query<(&PokerCard, &mut PokerCardStatus)>, deck_query: Query<(&mut Text, &DeckArea)>) {
     println!("MATCH ENDED");
     let mut to_used = 0;
-    for (card, mut status) in poker_query.iter_mut() {
+    for (_, mut status) in poker_query.iter_mut() {
         if *status == PokerCardStatus::OnTable {
             break;
         }
@@ -462,7 +464,27 @@ pub fn match_eneded(mut poker_query: Query<(&PokerCard, &mut PokerCardStatus)>, 
     if to_used > 0 {
         update_deck_area(deck_query, false, to_used);
     }
-    // TODO 清空玩家手牌
+}
+
+pub fn match_cleanup(
+    mut game_state: ResMut<NextState<MatchState>>,
+    mut type_text_query: Query<
+        (&mut Text, &SinglePokerAreaSlot, &PokerCardTypeSlotWithIndex),
+        (Without<PokerCardRankSlotWithIndex>),
+    >,
+    mut rank_text_query: Query<
+        (&mut Text, &SinglePokerAreaSlot, &PokerCardRankSlotWithIndex),
+        (Without<PokerCardTypeSlotWithIndex>,),
+    >,
+) {
+    for (mut node, slot, type_flag) in type_text_query.iter_mut() {
+        node.sections[0].value = POKER_EMPTY_SLOT_TEXT.parse().unwrap();
+    }
+    for (mut node, slot, rank) in rank_text_query.iter_mut() {
+        node.sections[0].value = BLANK_STRING.parse().unwrap();
+    }
+    game_state.set(MatchState::SouthTurn);
+
 }
 
 fn update_deck_area(mut deck_query: Query<(&mut Text, &DeckArea)>, deck_flag: bool, adder: i32) {

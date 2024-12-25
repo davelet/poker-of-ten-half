@@ -7,11 +7,11 @@ pub struct OnGameScreen;
 
 #[derive(Component, PartialEq, Eq)]
 pub enum ButtonOnGamePage {
-    BackMenuButton,
-    ExitGameButton,
-    RenewGameButton,
-    DealPokerButton,
-    StopDealingButton,
+    BackMenuButton,    // 返回前页(B)
+    ExitGameButton,    // 退出游戏(Q)
+    RenewGameButton,   // 重新开始游戏(R)
+    DealPokerButton,   // 给我发牌(N)
+    StopDealingButton, // 跳过我（J)
 }
 /// 牌数，A 2,3,4,5,6,7,8,9, 10，J Q K
 #[derive(Component, Debug, Clone, Copy)]
