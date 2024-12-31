@@ -2,7 +2,7 @@
 
 use std::panic;
 
-use bevy::prelude::*;
+use bevy::{asset::AssetMetaCheck, prelude::*};
 use constants::PANIC_FLAG;
 use plugins::prelude::*;
 use resources::prelude::*;
@@ -22,7 +22,10 @@ fn main() {
         }));
     }
     App::new()
-        .add_plugins(DefaultPlugins)
+        .add_plugins(DefaultPlugins.set(AssetPlugin {
+            meta_check: AssetMetaCheck::Never,
+            ..default()
+        }))
         .add_plugins((splash_plugin, menu_plugin, game_plugin, exit_plugin))
         .insert_resource(MatchPlayerCount::One)
         .insert_resource(MatchPokerSuitCount::One)
