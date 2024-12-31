@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{components::prelude::*, resources::prelude::*};
+use crate::{components::prelude::*, constants::APP_ICON, resources::prelude::*};
 
 pub fn splash_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     let font_handle = asset_server.load::<Font>(crate::constants::APP_FONT);
@@ -24,7 +24,7 @@ pub fn splash_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
             OnSplashScreen,
         ))
         .with_children(|parent| {
-            let icon = asset_server.load("poker-title.png");
+            let icon = asset_server.load(APP_ICON);
             parent.spawn(ImageBundle {
                 style: Style {
                     // This will set the logo to be 200px wide, and auto adjust its height

@@ -12,3 +12,30 @@
 
 ## 轮次
 每轮结束手中的牌都弃入废牌堆，继续用剩下的牌游戏。
+
+# 运行
+```bash
+cargo run
+```
+
+# WASM
+```bash
+cargo install wasm-server-runner
+
+export CARGO_TARGET_WASM32_UNKNOWN_UNKNOWN_RUNNER=wasm-server-runner
+
+cargo run --target wasm32-unknown-unknown
+
+```
+
+
+但是使用`wasm-bindgen`搭配`trunk`会不成功，加载不了静态资源。
+```bash
+rustup target add wasm32-unknown-unknown
+
+cargo build --target wasm32-unknown-unknown --release
+
+wasm-bindgen --out-dir ./out --target web target/wasm32-unknown-unknown/release/poker-of-ten-half.wasm
+
+trunk serve
+```
