@@ -1,7 +1,7 @@
 use bevy::{
     asset::Handle,
     color::{palettes::css::*, Color},
-    prelude::Image,
+    prelude::*,
     text::Font,
     ui::BackgroundColor,
 };
@@ -9,6 +9,24 @@ use bevy::{
 pub const MENU_TITLE: &str = "推十点半";
 pub const APP_FONT: &str = "Alibaba-PuHuiTi-Regular.otf";
 pub const APP_ICON: &str = "poker-title.png";
+
+// Replace unsafe global variables with resources
+#[derive(Resource, Default)]
+pub struct FontAssets {
+    pub han_font: Option<Handle<Font>>,
+}
+
+#[derive(Resource, Default)]
+pub struct ImageAssets {
+    pub app_icon: Option<Handle<Image>>,
+}
+
+#[derive(Resource, Default)]
+pub struct PanicState {
+    pub flag: bool,
+}
+
+// Keep the unsafe globals for backward compatibility during migration
 pub static mut HAN_FONT_OPTION: Option<Handle<Font>> = None;
 pub static mut APP_ICON_IMAGE: Option<Handle<Image>> = None;
 pub static mut PANIC_FLAG: bool = false;

@@ -149,7 +149,7 @@ pub fn menu_action(
                 app_exit_events.send(AppExit::Success);
             },
             _ => {
-                *color = START_BUTTON_NORMAL_COLOR;
+                *color = START_BUTTON_NORMAL_COLOR.into();
             },
         }
     }

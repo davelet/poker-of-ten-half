@@ -2,10 +2,22 @@ use bevy::prelude::*;
 
 use crate::{components::prelude::*, constants::APP_ICON, resources::prelude::*};
 
-pub fn splash_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
+pub fn splash_setup(
+    mut commands: Commands, 
+    asset_server: Res<AssetServer>,
+    mut font_assets: ResMut<crate::constants::FontAssets>,
+    mut image_assets: ResMut<crate::constants::ImageAssets>,
+) {
     let font_handle = asset_server.load::<Font>(crate::constants::APP_FONT);
+    // Use new resource-based approach
+    font_assets.han_font = Some(font_handle.clone());
+    // Keep backward compatibility
     unsafe { crate::constants::HAN_FONT_OPTION = Some(font_handle) };
+    
     let icon_handle = asset_server.load(crate::constants::APP_ICON);
+    // Use new resource-based approach
+    image_assets.app_icon = Some(icon_handle.clone());
+    // Keep backward compatibility
     unsafe { crate::constants::APP_ICON_IMAGE = Some(icon_handle) };
 
     // Display the logo

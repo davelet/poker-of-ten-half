@@ -14,6 +14,14 @@ mod resources;
 mod plugins;
 mod constants;
 
+// Create a prelude module for commonly used types
+pub mod prelude {
+    pub use crate::components::prelude::*;
+    pub use crate::resources::prelude::*;
+    pub use crate::systems::prelude::*;
+    pub use bevy::prelude::*;
+}
+
 fn main() {
     {
         panic::set_hook(Box::new(move |panic_info| {
@@ -30,15 +38,25 @@ fn main() {
         .insert_resource(MatchPlayerCount::One)
         .insert_resource(MatchPokerSuitCount::One)
         .insert_resource(DeckTable::default())
+        // Initialize new resource-based approach for better safety
+        .init_resource::<constants::FontAssets>()
+        .init_resource::<constants::ImageAssets>()
+        .init_resource::<constants::PanicState>()
         .init_state::<AppState>()
+        .enable_state_scoped_entities::<AppState>() // Enable StateScoped components for better cleanup
         .add_systems(Startup, setup)
         .add_systems(Update, check_panic_and_switch_state)
         .run();
 }
 
-fn check_panic_and_switch_state(state: ResMut<State<AppState>>, mut next_state: ResMut<NextState<AppState>>) {
-    // println!("check_panic_and_switch_state");
-    if unsafe { PANIC_FLAG } && *state.get() != AppState::Panic {
+fn check_panic_and_switch_state(
+    state: ResMut<State<AppState>>, 
+    mut next_state: ResMut<NextState<AppState>>,
+    panic_state: Res<constants::PanicState>,
+) {
+    // Check both new resource-based approach and legacy unsafe global for compatibility
+    let panic_flag = panic_state.flag || unsafe { PANIC_FLAG };
+    if panic_flag && *state.get() != AppState::Panic {
         println!("panic set");
         next_state.set(AppState::Panic);
     }

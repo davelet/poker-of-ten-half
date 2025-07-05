@@ -121,6 +121,7 @@ pub fn game_button_action(
                 *color = LIGHT_SEA_GREEN.into();
             },
             (ButtonOnGamePage::DealPokerButton, Interaction::Pressed) => {
+                *color = DARK_SEA_GREEN.into();
                 let simulated_key_event = KeyboardInput {
                     key_code: KeyCode::KeyN,
                     logical_key: Key::Character("N".into()),
@@ -130,6 +131,7 @@ pub fn game_button_action(
                 keyboard_input_writer.send(simulated_key_event);
             },
             (ButtonOnGamePage::StopDealingButton, Interaction::Pressed) => {
+                *color = DARK_GRAY.into();
                 let simulated_key_event = KeyboardInput {
                     key_code: KeyCode::KeyJ,
                     logical_key: Key::Character("J".into()),
@@ -137,6 +139,12 @@ pub fn game_button_action(
                     window: game_screen_entity.unwrap(),
                 };
                 keyboard_input_writer.send(simulated_key_event);
+            },
+            (ButtonOnGamePage::StopDealingButton, Interaction::Hovered) => {
+                *color = LIGHT_GRAY.into();
+            },
+            (ButtonOnGamePage::StopDealingButton, Interaction::None) => {
+                *color = GRAY.into();
             },
             _ => {},
         }
@@ -470,7 +478,7 @@ pub fn match_cleanup(
     mut game_state: ResMut<NextState<MatchState>>,
     mut type_text_query: Query<
         (&mut Text, &SinglePokerAreaSlot, &PokerCardTypeSlotWithIndex),
-        (Without<PokerCardRankSlotWithIndex>),
+        Without<PokerCardRankSlotWithIndex>,
     >,
     mut rank_text_query: Query<
         (&mut Text, &SinglePokerAreaSlot, &PokerCardRankSlotWithIndex),

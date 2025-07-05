@@ -1,1 +1,1 @@
-use bevy::prelude::*;
+// Exit system - currently empty
