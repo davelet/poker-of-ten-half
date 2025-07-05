@@ -1,7 +1,6 @@
 /target
 .idea/
 .vscode/
-Cargo.lock
 .DS_Store
 out/
 dist/
