@@ -1,8 +1,8 @@
 use bevy::{color::palettes::css::*, math::bool, prelude::*};
 
-use crate::{components::prelude::*, constants::*, HanTextStyle, MatchState};
+use crate::{components::prelude::*, constants::*, HanTextStyle, MatchState, resources::MatchPlayerCount};
 
-pub fn place_stage(parent: &mut ChildBuilder) {
+pub fn place_stage(parent: &mut ChildBuilder, player_count: &MatchPlayerCount) {
     parent
         .spawn(NodeBundle {
             style: Style {
@@ -19,13 +19,13 @@ pub fn place_stage(parent: &mut ChildBuilder) {
         })
         .with_children(|parent| {
             // 三行布局：对面、中、自己。其中中间的包括左边、中桌、右边
-            place_north_line(parent);
-            place_center_line(parent);
+            place_north_line(parent, player_count);
+            place_center_line(parent, player_count);
             place_south_line(parent);
         });
 }
 
-fn place_north_line(parent: &mut ChildBuilder) {
+fn place_north_line(parent: &mut ChildBuilder, player_count: &MatchPlayerCount) {
     parent
         .spawn(NodeBundle {
             style: Style {
@@ -43,7 +43,7 @@ fn place_north_line(parent: &mut ChildBuilder) {
         });
 }
 // 中间的包括左边、中桌、右边
-fn place_center_line(parent: &mut ChildBuilder) {
+fn place_center_line(parent: &mut ChildBuilder, player_count: &MatchPlayerCount) {
     parent
         .spawn(NodeBundle {
             style: Style {
@@ -58,11 +58,15 @@ fn place_center_line(parent: &mut ChildBuilder) {
             ..default()
         })
         .with_children(|parent| {
-            spawn_player(parent, GREEN_YELLOW, FlexDirection::ColumnReverse, MatchState::WestTurn, false);
+            // 西方玩家：只有在3个对手时才显示
+            let has_west = matches!(player_count, MatchPlayerCount::Three);
+            spawn_player(parent, GREEN_YELLOW, FlexDirection::ColumnReverse, MatchState::WestTurn, has_west);
 
             setup_deck_stage(parent);
 
-            spawn_player(parent, PINK, FlexDirection::ColumnReverse, MatchState::EastTurn, false);
+            // 东方玩家：在2个或3个对手时显示
+            let has_east = matches!(player_count, MatchPlayerCount::Two | MatchPlayerCount::Three);
+            spawn_player(parent, PINK, FlexDirection::ColumnReverse, MatchState::EastTurn, has_east);
         });
 }
 

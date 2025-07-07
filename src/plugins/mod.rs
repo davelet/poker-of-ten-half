@@ -14,7 +14,7 @@ pub fn splash_plugin(app: &mut App) {
 
 pub fn menu_plugin(app: &mut App) {
     app.add_systems(OnEnter(AppState::Menu), show_menu)
-        .add_systems(Update, (menu_action, menu_key_input_system).run_if(in_state(AppState::Menu)))
+        .add_systems(Update, (menu_action, menu_key_input_system, update_player_count_display).run_if(in_state(AppState::Menu)))
         .add_systems(OnExit(AppState::Menu), despawn_screen::<OnMenuScreen>);
 }
 

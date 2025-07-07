@@ -38,11 +38,31 @@ pub enum DealPokerInMatch {
 #[derive(Component)]
 pub struct DealingPokerRecord;
 
-#[derive(Resource, PartialEq, Eq)]
+#[derive(Resource, PartialEq, Eq, Clone, Copy, Debug)]
 pub enum MatchPlayerCount {
     One = 1,
     Two = 2,
     Three = 3,
+}
+
+impl Default for MatchPlayerCount {
+    fn default() -> Self {
+        MatchPlayerCount::Two
+    }
+}
+
+impl MatchPlayerCount {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            MatchPlayerCount::One => "1个对手",
+            MatchPlayerCount::Two => "2个对手",
+            MatchPlayerCount::Three => "3个对手",
+        }
+    }
+    
+    pub fn all() -> [MatchPlayerCount; 3] {
+        [MatchPlayerCount::One, MatchPlayerCount::Two, MatchPlayerCount::Three]
+    }
 }
 
 #[derive(Resource)]

@@ -35,7 +35,7 @@ fn main() {
             ..default()
         }))
         .add_plugins((splash_plugin, menu_plugin, game_plugin, exit_plugin))
-        .insert_resource(MatchPlayerCount::One)
+        .insert_resource(MatchPlayerCount::default())
         .insert_resource(MatchPokerSuitCount::One)
         .insert_resource(DeckTable::default())
         // Initialize new resource-based approach for better safety

@@ -7,4 +7,5 @@ pub struct OnMenuScreen;
 pub enum ButtonOnMenuPage {
     StartGameButton,
     ExitGameButton,
+    PlayerCountButton,
 }

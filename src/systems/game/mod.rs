@@ -27,7 +27,7 @@ pub fn shuffle_cards(mut commands: Commands, poker_query: Query<(Entity, &PokerC
     }
 }
 
-pub fn game_setup(mut commands: Commands) {
+pub fn game_setup(mut commands: Commands, player_count: Res<MatchPlayerCount>) {
     commands
         .spawn((
             NodeBundle {
@@ -45,7 +45,7 @@ pub fn game_setup(mut commands: Commands) {
         .with_children(|parent| {
             place_header(parent);
 
-            place_stage(parent);
+            place_stage(parent, &player_count);
         });
 }
 
